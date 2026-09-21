@@ -77,12 +77,45 @@ export default function SiteChrome({
 
       {/* ============ SIDE MENU ============ */}
       <div className="sidemenu" id="sidemenu" aria-hidden="true">
+        {content.brand.decal && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img className="sidemenu__decal" src={content.brand.decal} alt="" aria-hidden="true" />
+        )}
         <button className="sidemenu__close" id="sidemenu-close" aria-label="Close menu">&times;</button>
+        <span className="sidemenu__eyebrow">{content.brand.tagline}</span>
         <ul className="sidemenu__nav">
-          {content.nav.menu.map((link) => (
-            <li key={link.label}><a href={link.href}>{link.label}</a></li>
+          {content.nav.menu.map((link, i) => (
+            <li key={link.label} style={{ transitionDelay: `${80 + i * 45}ms` }}>
+              {link.children ? (
+                <details className="sidemenu__group">
+                  <summary>
+                    <span>{link.label}</span>
+                    <span className="sidemenu__chevron" aria-hidden="true"></span>
+                  </summary>
+                  <ul className="sidemenu__sub">
+                    <li><a href={link.href}>All {link.label}</a></li>
+                    {link.children.map((child) => (
+                      <li key={child.label}><a href={child.href}>{child.label}</a></li>
+                    ))}
+                  </ul>
+                </details>
+              ) : (
+                <a href={link.href}>{link.label}</a>
+              )}
+            </li>
           ))}
         </ul>
+        <div className="sidemenu__contact">
+          <span className="sidemenu__contact-name">{content.footer.agentName}</span>
+          {content.contact?.phone && (
+            <a href={`tel:${content.contact.phone.replace(/[^+\d]/g, "")}`}>{content.contact.phone}</a>
+          )}
+          {content.contact?.email && <a href={`mailto:${content.contact.email}`}>{content.contact.email}</a>}
+          <span>
+            {content.footer.brokerage}
+            {content.legal?.licenseNumber ? ` · Lic. #${content.legal.licenseNumber}` : ""}
+          </span>
+        </div>
       </div>
       <div className="sidemenu-overlay" id="sidemenu-overlay"></div>
 

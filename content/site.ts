@@ -6,6 +6,8 @@
 export interface NavLink {
   label: string;
   href: string;
+  /** Sub-links rendered as a collapsible group in the side menu */
+  children?: NavLink[];
 }
 
 export interface GalleryCard {
@@ -98,6 +100,11 @@ export interface SiteContent {
      * `dark` shows on the scrolled white nav and can be reused in the footer.
      */
     logo?: { light: string; dark: string };
+    /**
+     * Optional large, faint brand mark (e.g. a ring/seal logo, light version)
+     * that settles into the side menu's lower-right corner when it opens.
+     */
+    decal?: string;
     /** Where the header logo links. Defaults to "/"; set per client scope. */
     homeHref?: string;
   };
@@ -247,6 +254,7 @@ export const site: SiteContent = {
     name: "Commonwealth Living Group",
     tagline: "Beyond the Finish Line",
     logo: { light: "/brand/clg-mark-light.png", dark: "/brand/clg-mark-dark.png" },
+    decal: "/brand/clg-ring-light.png",
   },
   meta: {
     siteUrl: "https://commonwealthliving.com",
@@ -280,7 +288,16 @@ export const site: SiteContent = {
       { label: "Buy with Us", href: "/buy" },
       { label: "Sell with Us", href: "/sell" },
       { label: "New Construction", href: "/new-construction" },
-      { label: "Communities", href: "/communities" },
+      {
+        label: "Communities",
+        href: "/communities",
+        children: [
+          { label: "Canton", href: "/canton" },
+          { label: "Westwood", href: "/westwood" },
+          { label: "Wellesley", href: "/wellesley" },
+          { label: "Boston", href: "/boston" },
+        ],
+      },
       { label: "Meet the Team", href: "/team" },
       { label: "Search", href: "/search" },
       { label: "Let's Connect", href: "/connect" },

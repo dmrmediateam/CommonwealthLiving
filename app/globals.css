@@ -216,15 +216,18 @@ ul { list-style: none; }
 
 .navbar.hidden-up { transform: translateY(-100%); }
 
-/* hamburger */
+/* hamburger: 44px tap target; color: inherit so it follows the header
+   (white over the hero, dark once the header turns solid) */
 .hamburger {
-  width: 34px;
-  height: 22px;
-  margin-left: 28px;
+  width: 44px;
+  height: 44px;
+  margin-left: 23px;
+  margin-right: -5px;
   background: none;
   border: 0;
   cursor: pointer;
   position: relative;
+  color: inherit;
 }
 
 .hamburger span,
@@ -232,21 +235,22 @@ ul { list-style: none; }
 .hamburger::after {
   content: "";
   position: absolute;
-  left: 0;
-  width: 100%;
+  left: 5px;
+  width: 34px;
   height: 2px;
   background: currentColor;
   transition: 0.3s;
 }
 
-.hamburger::before { top: 2px; }
-.hamburger span { top: 10px; }
-.hamburger::after { top: 18px; }
+.hamburger::before { top: 13px; }
+.hamburger span { top: 21px; }
+.hamburger::after { top: 29px; }
 
-.hamburger:hover span { width: 70%; }
+.hamburger:hover span { width: 24px; }
 
 /* ==========================================================================
-   Side menu
+   Side menu: primary-color panel, faint brand decal, staggered links,
+   optional collapsible groups, contact block pinned to the bottom
    ========================================================================== */
 
 .sidemenu {
@@ -254,16 +258,36 @@ ul { list-style: none; }
   top: 0;
   right: 0;
   bottom: 0;
-  width: min(420px, 88vw);
-  background: var(--cream);
+  width: min(440px, 90vw);
+  background: var(--navy);
+  color: var(--cream);
   z-index: 1200;
   transform: translateX(100%);
-  transition: transform 0.45s cubic-bezier(0.77, 0, 0.175, 1);
-  padding: 90px 55px 40px;
+  transition: transform 0.5s cubic-bezier(0.77, 0, 0.175, 1);
+  padding: 96px 58px 44px;
+  overflow-x: hidden;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .sidemenu.open { transform: translateX(0); }
+
+.sidemenu > *:not(.sidemenu__decal):not(.sidemenu__close) { position: relative; z-index: 1; }
+
+.sidemenu__decal {
+  position: absolute;
+  right: -38%;
+  bottom: -14%;
+  width: 115%;
+  height: auto;
+  opacity: 0.12;
+  transform: rotate(-12deg) scale(0.92);
+  transition: transform 1.1s cubic-bezier(0.16, 1, 0.3, 1), opacity 1.1s ease;
+  pointer-events: none;
+}
+
+.sidemenu.open .sidemenu__decal { transform: rotate(0deg) scale(1); opacity: 0.16; }
 
 .sidemenu__close {
   position: absolute;
@@ -273,39 +297,118 @@ ul { list-style: none; }
   line-height: 1;
   background: none;
   border: 0;
-  color: var(--navy);
+  color: var(--cream);
   cursor: pointer;
-  transition: transform 0.3s;
+  transition: transform 0.3s, opacity 0.3s;
+  opacity: 0.7;
+  z-index: 2;
 }
 
-.sidemenu__close:hover { transform: rotate(90deg); }
+.sidemenu__close:hover { transform: rotate(90deg); opacity: 1; }
 
-.sidemenu__nav li { margin-bottom: 22px; }
-
-.sidemenu__nav a {
+.sidemenu__eyebrow {
+  display: block;
   font-family: var(--heading-font);
-  font-size: 17px;
-  letter-spacing: 2.5px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 3.2px;
   text-transform: uppercase;
-  color: var(--navy);
-  position: relative;
-  padding-bottom: 4px;
+  color: var(--taupe);
+  margin-bottom: 30px;
 }
 
-.sidemenu__nav a::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  height: 1px;
-  background: currentColor;
-  transform: scaleX(0);
-  transform-origin: left;
+.sidemenu__nav { flex: 1 1 auto; }
+.sidemenu__nav > li {
+  margin-bottom: 6px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 6px;
+  opacity: 0;
+  transform: translateX(24px);
+  transition: opacity 0.45s ease, transform 0.45s ease;
+}
+.sidemenu.open .sidemenu__nav > li { opacity: 1; transform: translateX(0); }
+
+.sidemenu__nav > li > a,
+.sidemenu__group summary span:first-child {
+  display: inline-block;
+  font-family: var(--display-font);
+  font-size: 22px;
+  font-weight: 300;
+  letter-spacing: 0.5px;
+  color: var(--cream);
+  padding: 8px 0;
+  transition: color 0.25s, padding-left 0.3s ease;
+}
+.sidemenu__nav > li > a:hover,
+.sidemenu__group summary:hover span:first-child { color: var(--taupe); padding-left: 10px; }
+
+/* collapsible group (NavLink.children): chevron turns 45deg -> 225deg */
+.sidemenu__group summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  list-style: none;
+}
+.sidemenu__group summary::-webkit-details-marker { display: none; }
+.sidemenu__chevron {
+  width: 9px;
+  height: 9px;
+  border-right: 1px solid var(--taupe);
+  border-bottom: 1px solid var(--taupe);
+  transform: rotate(45deg);
   transition: transform 0.3s ease;
+  margin-right: 4px;
+}
+.sidemenu__group[open] .sidemenu__chevron { transform: rotate(225deg); }
+
+.sidemenu__sub { padding: 4px 0 12px 2px; }
+.sidemenu__sub a {
+  display: inline-block;
+  font-family: var(--heading-font);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 2.2px;
+  text-transform: uppercase;
+  color: var(--cream);
+  opacity: 0.75;
+  padding: 7px 0;
+  transition: opacity 0.25s, padding-left 0.3s ease;
+}
+.sidemenu__sub a:hover { opacity: 1; padding-left: 10px; }
+
+.sidemenu__contact {
+  margin-top: 34px;
+  padding-top: 22px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.sidemenu__contact a {
+  font-family: var(--body-font);
+  font-size: 14px;
+  color: var(--cream);
+  transition: color 0.25s;
+}
+.sidemenu__contact a:hover { color: var(--taupe); }
+.sidemenu__contact span {
+  font-family: var(--heading-font);
+  font-size: 10px;
+  letter-spacing: 2.4px;
+  text-transform: uppercase;
+  color: var(--taupe);
+  margin-top: 6px;
+}
+.sidemenu__contact .sidemenu__contact-name {
+  font-size: 12px;
+  color: var(--cream);
+  margin: 0 0 4px;
 }
 
-.sidemenu__nav a:hover::after { transform: scaleX(1); }
+@media (prefers-reduced-motion: reduce) {
+  .sidemenu__nav > li, .sidemenu__decal { transition: none; }
+}
 
 .sidemenu-overlay {
   position: fixed;
@@ -1012,11 +1115,10 @@ footer { background: var(--cream); }
 }
 
 /* ==========================================================================
-   Serif accents — footer wordmark & side menu
+   Serif accents — footer wordmark
    ========================================================================== */
 
 .footer__wordmark { font-family: var(--display-font); text-transform: none; letter-spacing: 1px; }
-.sidemenu__nav a { font-family: var(--display-font); text-transform: none; font-size: 21px; letter-spacing: 0.5px; }
 
 
 /* ==========================================================================
