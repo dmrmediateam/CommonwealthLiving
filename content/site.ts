@@ -226,7 +226,7 @@ export interface SiteContent {
 }
 
 /* --------------------------------------------------------------------------
-   CLIENT: Commonwealth Living Group (commonwealth-living) - homepage variant "noir"
+   CLIENT: Commonwealth Living Group (commonwealth-living) - homepage variant "classic"
    Tom Tomasian, Team Lead · Real Broker MA, LLC · commonwealthliving.com
    Sources: DMR onboarding Typeform (Sep 2026), Zillow profile ttomasian,
    RealTrends Verified 2026 team profile, Google Business Profile, Instagram.
@@ -235,10 +235,10 @@ export interface SiteContent {
 const PHOTO = "/photos";
 
 export const site: SiteContent = {
-  homeVariant: "noir",
+  homeVariant: "classic",
   theme: {
     // Near-black + a deepened take on the logo gold (#B69151), tuned to stay
-    // legible on both the dark noir homepage and the light interior pages
+    // legible on the light canvas and the dark hero/CTA overlays
     primary: "#141414",
     secondary: "#9A7638",
     background: "#FAF8F4",

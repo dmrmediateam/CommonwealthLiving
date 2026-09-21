@@ -1,4 +1,4 @@
-> CLIENT REPO: **Commonwealth Living Group** · homepage variant: **noir** · scaffolded by new-client.
+> CLIENT REPO: **Commonwealth Living Group** · homepage variant: **classic** · scaffolded by new-client.
 > This repo serves ONE client. Customize content/site.ts per the playbook below;
 > the other homepage variants have been removed by design - do not re-add them.
 

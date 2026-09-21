@@ -1,7 +1,7 @@
-import HomeNoir from "@/components/home/HomeNoir";
+import HomeClassic from "@/components/home/HomeClassic";
 import type { Listing, SiteContent } from "@/content/site";
 
-/* This client uses the "noir" homepage design (locked by new-client). */
+/* This client uses the "classic" homepage design (locked by new-client). */
 
 export default function SitePage({
   content,
@@ -10,5 +10,5 @@ export default function SitePage({
   content: SiteContent;
   liveListings?: Listing[] | null;
 }) {
-  return <HomeNoir content={content} liveListings={liveListings} />;
+  return <HomeClassic content={content} liveListings={liveListings} />;
 }
