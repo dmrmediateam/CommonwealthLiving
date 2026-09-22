@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "new-client": "node scripts/new-client.mjs",
-    "images": "node scripts/generate-images.mjs"
+    "images": "node scripts/generate-images.mjs",
+    "check-idx": "node scripts/check-idx-capabilities.mjs"
   },
   "dependencies": {
     "next": "^15.4.5",
