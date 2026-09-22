@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Picture from "@/components/Picture";
 
 /**
@@ -23,6 +23,7 @@ export default function HeroMedia({
   video?: { webm?: string; mp4?: string };
 }) {
   const [showVideo, setShowVideo] = useState(false);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
 
   useEffect(() => {
     if (!video) return;
@@ -41,11 +42,44 @@ export default function HeroMedia({
     };
   }, [video]);
 
+  /*
+   * Phones only autoplay a video that is muted and inline, and React sets
+   * `muted` as a property after the element exists, which iOS can miss. Set it
+   * on the element itself and ask for playback; if the browser still refuses
+   * (Low Power Mode), the poster underneath stays visible.
+   */
+  useEffect(() => {
+    const el = videoRef.current;
+    if (!el) return;
+    el.muted = true;
+    el.defaultMuted = true;
+    const play = () => {
+      const attempt = el.play();
+      if (attempt?.catch) attempt.catch(() => undefined);
+    };
+    play();
+    // iOS suspends playback when the tab is backgrounded; resume on return.
+    const onVisible = () => { if (!document.hidden) play(); };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => document.removeEventListener("visibilitychange", onVisible);
+  }, [showVideo]);
+
   return (
     <>
       <Picture src={image} alt="" priority sizes="100vw" className="hero-poster" />
       {video && showVideo && (
-        <video className="hero-video" loop muted autoPlay playsInline preload="auto">
+        <video
+          ref={videoRef}
+          className="hero-video"
+          loop
+          muted
+          autoPlay
+          playsInline
+          // iOS Safari honours the legacy attribute; harmless elsewhere
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          {...({ "webkit-playsinline": "true", "x5-playsinline": "true" } as any)}
+          preload="auto"
+        >
           {video.webm && <source src={video.webm} type="video/webm" />}
           {video.mp4 && <source src={video.mp4} type="video/mp4" />}
         </video>

@@ -54,6 +54,8 @@ export interface ListingSummary {
   /** MLS office code of the listing brokerage — how we tell our own
    * listings apart from the rest of the MLS feed. See ./brokerage.ts. */
   listingOfficeId?: string;
+  /** MLS id of the listing agent, used to spot the team's own listings */
+  listingAgentId?: string;
   virtualTourUrl?: string;
   detailUrl: string;
 }

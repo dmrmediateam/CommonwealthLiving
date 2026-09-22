@@ -1,4 +1,7 @@
 import type { Listing } from "@/content/site";
+import { site } from "@/content/site";
+import { searchListings } from "@/lib/idx/search";
+import { formatPrice } from "@/lib/idx/display";
 
 /* ==========================================================================
    IDX Broker Partners API: the client's own active listings.
@@ -67,8 +70,52 @@ export async function getFeaturedListings(): Promise<Listing[] | null> {
         };
       })
       .filter((listing) => listing.price && listing.image);
-    return listings.length > 0 ? listings : null;
+    if (listings.length > 0) return listings;
+    return teamListings();
   } catch {
-    return null;
+    return teamListings();
   }
+}
+
+/**
+ * The team's own listings, straight from the MLS feed.
+ *
+ * IDX's "featured" list is whatever the client ticks inside IDX Broker, and a
+ * new account has nothing ticked. When `idx.agentIds` names the team's MLS
+ * agent ids we can find their listings ourselves: active first, then pending,
+ * then sold, so the band shows their work rather than placeholders.
+ */
+async function teamListings(): Promise<Listing[] | null> {
+  const agentIds = (site.idx?.agentIds ?? []).map((id) => id.toLowerCase());
+  if (agentIds.length === 0) return null;
+
+  const statuses = ["active", "pending", "sold"] as const;
+  const found: Listing[] = [];
+
+  for (const status of statuses) {
+    if (found.length >= 3) break;
+    try {
+      const response = await searchListings({ status, pageSize: 250 });
+      for (const listing of response.listings) {
+        if (!listing.listingAgentId) continue;
+        if (!agentIds.includes(listing.listingAgentId.toLowerCase())) continue;
+        found.push({
+          price: formatPrice(listing.price),
+          address: listing.address.full,
+          beds: listing.beds ? String(listing.beds) : undefined,
+          baths: listing.baths ? String(listing.baths) : undefined,
+          sqft: listing.sqFt ? String(listing.sqFt) : undefined,
+          status: status === "active" ? "For Sale" : status === "pending" ? "Pending" : "Sold",
+          mls: listing.mlsNumber,
+          image: listing.primaryPhoto?.url ?? "",
+          href: listing.detailUrl,
+        });
+        if (found.length >= 6) break;
+      }
+    } catch {
+      // A failed status should not cost the ones that worked
+    }
+  }
+
+  return found.length > 0 ? found : null;
 }

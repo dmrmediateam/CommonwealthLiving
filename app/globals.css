@@ -3689,3 +3689,151 @@ a:hover > .hn-link::after,
 .listing-desc.is-open .listing-desc__chevron {
   transform: rotate(225deg) translate(-2px, -2px);
 }
+
+/* ==========================================================================
+   Mobile pass
+   ========================================================================== */
+
+/* Grid children default to min-width:auto, so one long heading ("Tom
+   Tomasian · Commonwealth Living Group") held the contact column wider than
+   the phone and scrolled the whole page sideways. */
+.connect-grid > *,
+.connect-grid__details,
+.split-section__row > * {
+  min-width: 0;
+}
+
+.connect-grid__details h2,
+.connect-grid__details p,
+.connect-grid__details address {
+  overflow-wrap: break-word;
+}
+
+@media (max-width: 768px) {
+  /* iOS zooms the page whenever a focused field is under 16px. Every text
+     field on the site was 13-14px, so tapping any of them yanked the layout. */
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="search"],
+  input[type="number"],
+  textarea,
+  select {
+    font-size: 16px;
+  }
+
+  /* Checkboxes were a 13px target next to consent copy */
+  input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    flex: 0 0 auto;
+  }
+
+  /* Comfortable targets in the side menu and footer */
+  .sidemenu__close {
+    width: 44px;
+    height: 44px;
+    top: 14px;
+    right: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .footer__nav a,
+  .footer__legal-links a {
+    display: inline-block;
+    padding: 6px 0;
+  }
+
+  .socials a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    min-height: 40px;
+  }
+
+  /* Clear of the home indicator on notched phones */
+  .connect-btn {
+    right: 16px;
+    bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+    padding: 15px 22px;
+  }
+
+  /* The search field keeps its own scale: 16px here would crowd the bar */
+  .search-input { font-size: 15px; letter-spacing: 0.8px; }
+  .search-suggest a { padding: 13px 16px; }
+  .search-suggest__kind { font-size: 9px; }
+
+  /* Listing filters: full-width location row, then two menus per line */
+  .idx-filters__location { flex: 1 1 100%; }
+  .fsel__menu { max-height: 260px; }
+
+  /* Long MLS addresses should wrap rather than clip */
+  .listing-card__address,
+  .idx-card__address { overflow-wrap: break-word; }
+}
+
+/* Very small phones: keep the hero legible and the bar usable */
+@media (max-width: 390px) {
+  .search-bar { padding-left: 14px; padding-right: 8px; }
+  .search-bar .contact-section { padding: 11px 14px; margin-left: 6px; }
+  .idx-filters { padding: 10px; }
+}
+
+/* A textarea sizes itself from its `cols` attribute (about 440px), which is
+   wider than a phone: that was the sideways scroll on the contact page. */
+textarea {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  /* Beat the per-form rules: under 16px, iOS zooms on focus */
+  .connect-grid__fields input,
+  .connect-grid__fields textarea,
+  .listing-inquiry input,
+  .listing-inquiry textarea,
+  .valuation input,
+  .valuation select,
+  .newsletter-form input,
+  form input[type="text"],
+  form input[type="email"],
+  form input[type="tel"],
+  form textarea {
+    font-size: 16px;
+  }
+
+  /* Read more was a 16px-tall target */
+  .listing-desc__toggle {
+    min-height: 44px;
+    padding: 10px 6px;
+  }
+
+  .footer__legal-links a,
+  .footer__legal-panel summary {
+    padding: 9px 0;
+    display: inline-block;
+  }
+}
+
+/* The textarea's intrinsic width sized the grid track itself, so width:100%
+   still resolved to 440px. Grid items need min-width:0 to be allowed to shrink. */
+.connect-grid__fields > *,
+.listing-detail__inquiry > *,
+.connect-grid__fields textarea,
+.listing-detail__inquiry textarea {
+  min-width: 0;
+}
+
+@media (max-width: 768px) {
+  /* Specific enough to beat the per-form sizes */
+  .listing-detail__inquiry input,
+  .listing-detail__inquiry textarea,
+  .connect-grid__fields input,
+  .connect-grid__fields textarea {
+    font-size: 16px;
+  }
+}

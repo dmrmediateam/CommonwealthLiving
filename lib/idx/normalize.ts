@@ -49,6 +49,7 @@ export interface RawIdxListing {
   // MLS office code. Present on both search results and detail records —
   // unlike listOfficeName, which only exists on the detail endpoint.
   listingOfficeID?: string;
+  listingAgentID?: string;
   listOfficeName?: string;
   listingOfficeName?: string;
   mediaData?: RawIdxImageEntry[];
@@ -157,6 +158,7 @@ export function normalizeListingSummary(raw: RawIdxListing): ListingSummary {
     // cannot single out our own listings — use listingOfficeId for that.
     featured: raw.featured === 'y',
     listingOfficeId: raw.listingOfficeID,
+    listingAgentId: raw.listingAgentID,
     detailUrl: detailUrlFor(raw),
   };
 }

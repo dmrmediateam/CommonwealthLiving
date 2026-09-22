@@ -178,6 +178,14 @@ export interface SiteContent {
     /** Towns to offer in the homepage autocomplete (the client's markets) */
     markets?: string[];
     /**
+     * MLS agent ids for the team. The homepage "Featured Properties" band
+     * shows these agents' own listings, pulled live: active first, then
+     * pending, then recent solds if the MLS provides them. Listings marked
+     * Featured inside IDX Broker always win over this. With neither, the
+     * band falls back to the placeholder listings below.
+     */
+    agentIds?: string[];
+    /**
      * Property-type menu for the on-page search. Values must match what the
      * client's MLS actually returns (MLS PIN, for instance, has no subtypes:
      * everything is Residential / Residential Income / Land). Omit to use the
@@ -336,6 +344,12 @@ export const site: SiteContent = {
   // unless a visitor sets their own minimum.
   idx: {
     minPrice: 800000,
+    // Tom's MLS PIN agent id goes here. It is not yet known: at the time of
+    // writing the team had no active, pending or sold listing in the feed to
+    // read it from (a scan of 1,508 listings across their towns found none),
+    // and their IDX account has no agents configured. Until it is set, or a
+    // listing is marked Featured in IDX Broker, the band shows placeholders.
+    agentIds: [],
     // Towns the team works. They power the homepage autocomplete, so every
     // one is searchable the moment the page loads, before the MLS location
     // index arrives. Keep in step with IDX_MARKET_CITIES.
