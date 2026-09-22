@@ -406,7 +406,7 @@ export const site: SiteContent = {
         beds: "4",
         baths: "3.5",
         sqft: "3,650",
-        status: "New Construction",
+        status: "For Sale",
         mls: "DEMO-003",
         image: `${PHOTO}/new-construction-modern-farmhouse.jpg`,
         href: "/listings",
@@ -770,7 +770,7 @@ export const site: SiteContent = {
     addressLines: ["375 Neponset Ave", "Boston, MA 02122", "(617) 295-7600"],
     newsletter: {
       heading: "Join the List",
-      tagline: "New Construction. Market Data. First Looks.",
+      tagline: "New Listings. Market Data. First Looks.",
       consent:
         "I agree to be contacted by Commonwealth Living Group via call, email, and text for real estate services. To opt out, reply 'stop' at any time or reply 'help' for assistance. You can also click the unsubscribe link in the emails. Message and data rates may apply. Message frequency may vary.",
     },
