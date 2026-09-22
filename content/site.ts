@@ -160,7 +160,17 @@ export interface SiteContent {
    * eaganluxury.idxbroker.com) and the search page embeds their hosted search.
    * Omit to show a "search coming soon" panel instead.
    */
-  idx?: { subdomain?: string; searchPath?: string };
+  idx?: {
+    subdomain?: string;
+    searchPath?: string;
+    /**
+     * Property-type menu for the on-page search. Values must match what the
+     * client's MLS actually returns (MLS PIN, for instance, has no subtypes:
+     * everything is Residential / Residential Income / Land). Omit to use the
+     * generic Single Family / Condominium / Townhouse / Land menu.
+     */
+    propertyTypes?: { value: string; label: string }[];
+  };
   /** Contact details for the connect page and footer */
   contact?: { phone?: string; email?: string };
   /**
@@ -306,6 +316,15 @@ export const site: SiteContent = {
       { label: "Let's Connect", href: "/connect" },
     ],
   },
+  // MLS PIN returns only broad categories, so the search menu mirrors them.
+  idx: {
+    propertyTypes: [
+      { value: "", label: "Any Type" },
+      { value: "residential", label: "Homes" },
+      { value: "residential income", label: "Multi-Family" },
+      { value: "land", label: "Land" },
+    ],
+  },
   contact: { phone: "(617) 295-7600", email: "tom@clghomes.com" },
   team: {
     tagline: "A small team with a big-market record.",
@@ -358,7 +377,7 @@ export const site: SiteContent = {
       {
         price: "$1,895,000",
         address: "Sample Listing · Wellesley",
-        propertyType: "single-family",
+        propertyType: "residential",
         beds: "5",
         baths: "4.5",
         sqft: "4,800",
@@ -370,7 +389,7 @@ export const site: SiteContent = {
       {
         price: "$1,450,000",
         address: "Sample Listing · Westwood",
-        propertyType: "single-family",
+        propertyType: "residential",
         beds: "4",
         baths: "3.5",
         sqft: "3,900",
@@ -382,7 +401,7 @@ export const site: SiteContent = {
       {
         price: "$1,275,000",
         address: "Sample Listing · Canton",
-        propertyType: "single-family",
+        propertyType: "residential",
         beds: "4",
         baths: "3.5",
         sqft: "3,650",
@@ -394,7 +413,7 @@ export const site: SiteContent = {
       {
         price: "$1,650,000",
         address: "Sample Listing · Boston, Back Bay",
-        propertyType: "condominium",
+        propertyType: "residential",
         beds: "2",
         baths: "2",
         sqft: "1,550",

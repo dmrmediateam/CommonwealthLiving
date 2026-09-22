@@ -9,6 +9,14 @@ const SEARCH_REVALIDATE_SECONDS = 900;
 const POOL_REVALIDATE_SECONDS = 3600;
 const DEFAULT_PAGE_SIZE = 21;
 const IDX_RESULT_CAP = 250;
+/**
+ * Per-city cap for the cached browse pool. Big-city markets (Boston, Newton)
+ * return ~3MB at the full cap, over Next's 2MB data-cache item limit, so those
+ * responses were never cached and every /listings request refetched them
+ * (~18s). At 100 per city a response stays ~1.2MB and caches. Targeted
+ * single-city searches still use the full IDX_RESULT_CAP.
+ */
+const POOL_CITY_CAP = 100;
 
 function statusParam(status: SearchFilters['status']): string | undefined {
   switch (status) {
@@ -24,8 +32,18 @@ function isListingRecord(value: unknown): value is RawIdxListing {
   return !!value && typeof value === 'object' && 'listingID' in value && 'idxID' in value;
 }
 
+/**
+ * Categories this residential sales site never shows. Some MLSs (MLS PIN, for
+ * one) mix rentals and commercial into the same feed, which would otherwise
+ * put lease listings in a luxury for-sale search.
+ */
+const EXCLUDED_PROPERTY_TYPES = /lease|rental|commercial/i;
+
 function rawToListings(raw: Record<string, unknown>): ListingSummary[] {
-  return Object.values(raw ?? {}).filter(isListingRecord).map(normalizeListingSummary);
+  return Object.values(raw ?? {})
+    .filter(isListingRecord)
+    .map(normalizeListingSummary)
+    .filter((listing) => !EXCLUDED_PROPERTY_TYPES.test(listing.propertyType));
 }
 
 function isRateLimitedError(error: unknown): boolean {
@@ -34,16 +52,31 @@ function isRateLimitedError(error: unknown): boolean {
     : !!error && typeof error === 'object' && 'kind' in error && error.kind === 'rateLimited';
 }
 
+/**
+ * Every searchquery goes through here. The raw IDX response for a busy market
+ * runs 2-3MB, over Next's 2MB data-cache item limit, so caching the fetch
+ * itself silently failed and each search refetched (8-15s). The normalized
+ * summaries are ~10x smaller and cache cleanly, so the raw call skips the
+ * data cache (no revalidateSeconds) and the result is cached here instead.
+ */
+const cachedSearchQuery = unstable_cache(
+  async (query: Record<string, string | number | undefined>) => {
+    const raw = await idxRequest<Record<string, unknown>>('/clients/searchquery', {
+      query,
+      retries: 1,
+    });
+    return rawToListings(raw);
+  },
+  ['idx-searchquery-v1'],
+  { revalidate: SEARCH_REVALIDATE_SECONDS, tags: ['idx-searchquery'] },
+);
+
 async function fetchCity(
   city: string,
   propStatus: string | undefined,
+  limit: number = IDX_RESULT_CAP,
 ): Promise<ListingSummary[]> {
-  const raw = await idxRequest<Record<string, unknown>>('/clients/searchquery', {
-    query: { aw_cityName: city, propStatus, limit: IDX_RESULT_CAP },
-    revalidateSeconds: SEARCH_REVALIDATE_SECONDS,
-    retries: 1,
-  });
-  return rawToListings(raw);
+  return cachedSearchQuery({ aw_cityName: city, propStatus, limit });
 }
 
 function deduplicate(lists: ListingSummary[][]): ListingSummary[] {
@@ -62,7 +95,7 @@ function deduplicate(lists: ListingSummary[][]): ListingSummary[] {
 // batches — keeps cold-start refreshes bounded.
 const POOL_CONCURRENCY = 3;
 const POOL_BATCH_DELAY_MS = 350;
-const POOL_CACHE_CHUNK_SIZE = 10;
+const POOL_CACHE_CHUNK_SIZE = 5;
 const POOL_CACHE_CHUNK_COUNT = Math.ceil(MARKET_CITIES.length / POOL_CACHE_CHUNK_SIZE);
 
 async function fetchPoolChunkThrottled(cities: readonly string[]): Promise<ListingSummary[]> {
@@ -71,7 +104,7 @@ async function fetchPoolChunkThrottled(cities: readonly string[]): Promise<Listi
     const batch = cities.slice(i, i + POOL_CONCURRENCY);
     const batchResults = await Promise.all(
       batch.map((city) =>
-        fetchCity(city, 'Active').catch((error) => {
+        fetchCity(city, 'Active', POOL_CITY_CAP).catch((error) => {
           if (isRateLimitedError(error)) throw error;
           return [] as ListingSummary[];
         }),
@@ -98,10 +131,13 @@ const getActivePoolChunk = unstable_cache(
 );
 
 async function getActivePool(): Promise<ListingSummary[]> {
-  const chunks: ListingSummary[][] = [];
-  for (let index = 0; index < POOL_CACHE_CHUNK_COUNT; index++) {
-    chunks.push(await getActivePoolChunk(index));
-  }
+  // In parallel: sequentially awaiting each chunk could not complete inside a
+  // single request, so the trailing chunks never reached the cache and every
+  // visitor paid the pool timeout before falling back. Each chunk still
+  // throttles its own city fetches.
+  const chunks = await Promise.all(
+    Array.from({ length: POOL_CACHE_CHUNK_COUNT }, (_, index) => getActivePoolChunk(index)),
+  );
   return deduplicate(chunks);
 }
 
@@ -147,44 +183,34 @@ export async function searchListings(filters: SearchFilters): Promise<SearchResp
     if (hasLocationFilter) {
       // One targeted request powers both the results and autocomplete. Next's
       // data cache also deduplicates repeated searches for the same term.
-      const raw = await idxRequest<Record<string, unknown>>('/clients/searchquery', {
-        query: {
-          aw_address: filters.address,
-          aw_cityName: filters.city,
-          aw_countyName: filters.county,
-          aw_zipcode: filters.postalCode,
-          aw_subdivision: filters.subdivision,
-          aw_areaName: filters.mlsArea,
-          propStatus: statusParam(filters.status),
-          lp: filters.minPrice,
-          hp: filters.maxPrice,
-          bd: filters.minBeds,
-          tb: filters.minBaths,
-          limit: IDX_RESULT_CAP,
-        },
-        revalidateSeconds: SEARCH_REVALIDATE_SECONDS,
-        retries: 1,
+      listings = await cachedSearchQuery({
+        aw_address: filters.address,
+        aw_cityName: filters.city,
+        aw_countyName: filters.county,
+        aw_zipcode: filters.postalCode,
+        aw_subdivision: filters.subdivision,
+        aw_areaName: filters.mlsArea,
+        propStatus: statusParam(filters.status),
+        lp: filters.minPrice,
+        hp: filters.maxPrice,
+        bd: filters.minBeds,
+        tb: filters.minBaths,
+        limit: IDX_RESULT_CAP,
       });
-      listings = rawToListings(raw);
     } else if (!filters.status || filters.status === 'active') {
       // Preserve the warm broad feed. If a cold chunk takes too long, cached
       // core-market queries provide a fast first-page fallback.
       const serviceAreaFallback = async () => {
         const results = await Promise.all(
           CORE_MARKET_CITIES.map((city) =>
-            fetchCity(city, 'Active').catch(() => [] as ListingSummary[]),
+            fetchCity(city, 'Active', POOL_CITY_CAP).catch(() => [] as ListingSummary[]),
           ),
         );
         return deduplicate(results);
       };
       if (MARKET_CITIES.length === 0) {
         // No market cities configured: one broad active query for the account's MLS
-        const raw = await idxRequest<Record<string, unknown>>('/clients/searchquery', {
-          query: { propStatus: 'Active', limit: IDX_RESULT_CAP },
-          revalidateSeconds: SEARCH_REVALIDATE_SECONDS,
-          retries: 1,
-        });
-        listings = rawToListings(raw);
+        listings = await cachedSearchQuery({ propStatus: 'Active', limit: IDX_RESULT_CAP });
       } else {
         const timeout = new Promise<never>((_, reject) =>
           setTimeout(() => reject(new Error('pool_timeout')), 3000),

@@ -86,6 +86,7 @@ export default function SubPageView({
               idxEnabled={idxEnabled}
               fallbackListings={listings}
               searchHref={searchHref}
+              propertyTypeOptions={content.idx?.propertyTypes}
             />
           )}
           {page.sections?.map((section, i) => (

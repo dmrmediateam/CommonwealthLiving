@@ -92,15 +92,32 @@ function fallbackToSummary(listing: Listing, index: number): ListingSummary {
   };
 }
 
+/**
+ * Default type list. MLSs differ: some expose subtypes (Condominium,
+ * Townhouse), others only broad categories (MLS PIN returns Residential /
+ * Residential Income / Land). Override per client with `idx.propertyTypes`
+ * in content/site.ts so the menu can only offer values the feed actually has.
+ */
+const DEFAULT_PROPERTY_TYPES = [
+  { value: "", label: "Any Type" },
+  { value: "single-family", label: "Single Family" },
+  { value: "condominium", label: "Condominium" },
+  { value: "townhouse", label: "Townhouse" },
+  { value: "land", label: "Land" },
+];
+
 export default function PropertySearchExperience({
   idxEnabled,
   fallbackListings,
   searchHref,
+  propertyTypeOptions,
 }: {
   idxEnabled: boolean;
   fallbackListings: Listing[];
   /** Where "View all results" links (the full MLS search page) */
   searchHref: string;
+  /** Per-MLS type menu; defaults to the generic subtype list */
+  propertyTypeOptions?: { value: string; label: string }[];
 }) {
   const [filters, setFilters] = useState<Filters>(EMPTY);
   const [results, setResults] = useState<ListingSummary[] | null>(null);
@@ -267,13 +284,7 @@ export default function PropertySearchExperience({
               placeholder="Any Type"
               value={filters.propertyType}
               onChange={(next) => update("propertyType", next)}
-              options={[
-                { value: "", label: "Any Type" },
-                { value: "single-family", label: "Single Family" },
-                { value: "condominium", label: "Condominium" },
-                { value: "townhouse", label: "Townhouse" },
-                { value: "land", label: "Land" },
-              ]}
+              options={propertyTypeOptions ?? DEFAULT_PROPERTY_TYPES}
             />
           </div>
 
