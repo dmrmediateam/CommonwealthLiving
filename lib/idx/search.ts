@@ -1,6 +1,7 @@
 import 'server-only';
 import { unstable_cache } from 'next/cache';
 import { idxRequest } from './request';
+import { site } from '@/content/site';
 import { normalizeListingSummary, RawIdxListing } from './normalize';
 import { AddressSuggestion, IdxApiError, ListingSummary, SearchFilters, SearchResponse } from './types';
 import { CORE_MARKET_CITIES, MARKET_CITIES } from './config';
@@ -228,7 +229,9 @@ export async function searchListings(filters: SearchFilters): Promise<SearchResp
     }
 
     // In-memory filters — applied on all paths so the cached pool is shared
-    if (filters.minPrice)        listings = listings.filter((l) => l.price >= filters.minPrice!);
+    // The client's floor applies until the visitor names their own minimum.
+    const minPrice = filters.minPrice ?? site.idx?.minPrice;
+    if (minPrice)                listings = listings.filter((l) => l.price >= minPrice);
     if (filters.maxPrice)        listings = listings.filter((l) => l.price <= filters.maxPrice!);
     if (filters.minBeds)         listings = listings.filter((l) => (l.beds ?? 0) >= filters.minBeds!);
     if (filters.minBaths)        listings = listings.filter((l) => (l.baths ?? 0) >= filters.minBaths!);
@@ -258,13 +261,17 @@ export async function searchListings(filters: SearchFilters): Promise<SearchResp
 
     const totalCount = listings.length;
     const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
-    const start = (page - 1) * pageSize;
+    // Tightening a filter can leave the visitor on a page that no longer
+    // exists (page 2 of 19 results), which showed an empty grid and a
+    // nonsense "Showing 22-19 of 19". Clamp instead.
+    const safePage = Math.min(Math.max(1, page), totalPages);
+    const start = (safePage - 1) * pageSize;
     const addressSuggestions = filters.address ? addressSuggestionsFrom(listings) : undefined;
 
     return {
       listings: listings.slice(start, start + pageSize),
       totalCount,
-      page,
+      page: safePage,
       pageSize,
       totalPages,
       addressQuery: filters.address,

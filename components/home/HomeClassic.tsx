@@ -1,6 +1,7 @@
 import type { CSSProperties } from "react";
 import AboutFlow from "@/components/AboutFlow";
 import SiteChrome from "@/components/SiteChrome";
+import SearchCard from "@/components/home/SearchCard";
 import ListingsGrid from "@/components/ListingsGrid";
 import HeroMedia from "@/components/home/HeroMedia";
 import Picture from "@/components/Picture";
@@ -39,18 +40,13 @@ export default function HomeClassic({
 
       {/* ============ STICKY SEARCH BAR ============ */}
       <section className="search-bar-section" id="search-bar">
-        <div className="search-bar">
-          <div className="search-input-container">
-            <svg className="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="7" /><path d="M20 20l-4-4" /></svg>
-            <input type="text" placeholder={content.searchBar.placeholder} className="search-input" />
-          </div>
-          <a href={content.searchBar.ctaHref} className="contact-section">
-            <span className="link-label">{content.searchBar.ctaLabel}</span>
-            <span className="icon-style" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 12h15" /><path d="M13 6l6 6-6 6" /></svg>
-            </span>
-          </a>
-        </div>
+        <SearchCard
+          placeholder={content.searchBar.placeholder}
+          ctaLabel={content.searchBar.ctaLabel}
+          ctaHref={content.searchBar.ctaHref}
+          listings={featuredListings.filter((l) => !l.mls?.startsWith("DEMO"))}
+          pages={suggestionPages(content)}
+        />
       </section>
 
       {/* ============ SERVICES GALLERY ============ */}
@@ -145,6 +141,29 @@ export default function HomeClassic({
     </SiteChrome>
   );
 }
+
+/** Autocomplete entries for the client's own pages, straight from the config. */
+function suggestionPages(content: SiteContent): { label: string; kind: string; href: string }[] {
+  const areas = content.areas.map((area) => ({
+    label: area.title,
+    kind: "Community",
+    href: area.href,
+  }));
+  const guides = content.pages
+    .filter((page) => ["communities", "new-construction"].includes(page.slug))
+    .map((page) => ({
+      label: page.title,
+      kind: page.slug === "communities" ? "Guide" : "Specialty",
+      href: `/${page.slug}`,
+    }));
+  const seen = new Set<string>();
+  return [...areas, ...guides].filter((entry) => {
+    if (seen.has(entry.href)) return false;
+    seen.add(entry.href);
+    return true;
+  });
+}
+
 
 function GallerySection({
   cards,

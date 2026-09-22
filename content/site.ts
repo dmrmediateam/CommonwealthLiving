@@ -164,6 +164,12 @@ export interface SiteContent {
     subdomain?: string;
     searchPath?: string;
     /**
+     * Hides anything below this price from the browse feed and from searches
+     * that set no minimum. A visitor who picks a lower Min Price still sees
+     * everything; this only stops a luxury site from opening on starter homes.
+     */
+    minPrice?: number;
+    /**
      * Property-type menu for the on-page search. Values must match what the
      * client's MLS actually returns (MLS PIN, for instance, has no subtypes:
      * everything is Residential / Residential Income / Land). Omit to use the
@@ -281,26 +287,28 @@ export const site: SiteContent = {
     video: { webm: "/video/boston-aerial.webm", mp4: "/video/boston-aerial.mp4" },
   },
   searchBar: {
-    placeholder: "Search by Town or Address",
-    ctaLabel: "Talk With Tom",
-    ctaHref: "/connect",
+    // The button runs the search now, so it says so.
+    placeholder: "Search by Town, Neighborhood, or Address",
+    ctaLabel: "Search Homes",
+    ctaHref: "/listings",
   },
   nav: {
     // Balanced around the centered logo: what you do on the left,
     // where and who on the right.
     left: [
       { label: "Property Search", href: "/listings" },
+      { label: "New Construction", href: "/new-construction" },
       { label: "Buy With Us", href: "/buy" },
-      { label: "Sell With Us", href: "/sell" },
     ],
     right: [
+      { label: "Sell With Us", href: "/sell" },
       { label: "Communities", href: "/communities" },
-      { label: "Meet the Team", href: "/team" },
       { label: "Let’s Connect", href: "/connect" },
     ],
     menu: [
       { label: "Home", href: "/" },
       { label: "Property Search", href: "/listings" },
+      { label: "New Construction", href: "/new-construction" },
       { label: "Buy with Us", href: "/buy" },
       { label: "Sell with Us", href: "/sell" },
       {
@@ -319,6 +327,8 @@ export const site: SiteContent = {
   },
   // MLS PIN returns only broad categories, so the search menu mirrors them.
   idx: {
+    // Client brief: luxury focus, nothing under $800K.
+    minPrice: 800000,
     propertyTypes: [
       { value: "", label: "Any Type" },
       { value: "residential", label: "Homes" },
@@ -499,12 +509,44 @@ export const site: SiteContent = {
       valuationImage: `${PHOTO}/shingle-estate-dusk.jpg`,
     },
     {
+      slug: "new-construction",
+      title: "New Construction",
+      preTitle: "New Builds Across Greater Boston",
+      heroImage: `${PHOTO}/new-construction-modern-farmhouse.jpg`,
+      intro: [
+        "New construction is where we spend most of our time. From a single infill build in Canton or Westwood to a new neighborhood on the South Shore, and new high-end condominiums in the city, we help buyers weigh the builder, the contract, and the numbers before they commit.",
+      ],
+      sections: [
+        {
+          heading: "Representation on Your Side",
+          text: "The sales office represents the builder. Having your own agent costs you nothing in most new construction purchases, and it puts someone in your corner for pricing, upgrades, and contract terms.",
+          image: `${PHOTO}/new-construction-site.jpg`,
+        },
+        {
+          heading: "Financing a Build",
+          text: "Construction timelines change how you finance. Tom's fifteen years in the mortgage business help you plan rate locks, deposits, and closing dates around the build schedule instead of reacting to it.",
+          image: `${PHOTO}/tom-tomasian-office.jpg`,
+        },
+        {
+          heading: "Single Family in the Suburbs, Condos in the City",
+          text: "In Canton, Westwood, Wellesley, and the towns around them, new construction means single family homes on established streets. In Boston proper it means high-end condominiums: new buildings, penthouses, and boutique conversions. We work both.",
+          image: `${PHOTO}/living-room-black-windows.jpg`,
+        },
+        {
+          heading: "Inspections at Every Stage",
+          text: "New does not mean flawless. We encourage independent inspections before drywall and before closing, and we track the punch list through to completion.",
+          image: `${PHOTO}/living-room-two-story.jpg`,
+        },
+      ],
+      cta: { label: "Ask About New Builds", href: "/connect" },
+    },
+    {
       slug: "communities",
       title: "Communities",
       preTitle: "Greater Boston, Town by Town",
       heroImage: `${PHOTO}/new-england-autumn-aerial.jpg`,
       intro: [
-        "We focus on the Greater Boston towns where move-up and luxury buyers live: established suburbs west and south of the city, the South Shore, and the high-end condo market in Boston itself.",
+        "We focus on the Greater Boston towns where move-up and luxury buyers live. In the suburbs that means single family homes, with heavy emphasis on new construction. In Boston proper it means high-end condominiums. Counties here are broad and prices swing widely between towns, so we work town by town rather than painting the whole map with one brush.",
       ],
       sections: [
         {
@@ -668,14 +710,14 @@ export const site: SiteContent = {
       title: "Sell with Us",
       cta: "Learn More",
       href: "/sell",
-      image: `${PHOTO}/brick-manor-gates.jpg`,
+      image: `${PHOTO}/colonial-hydrangeas.jpg`,
     },
     {
-      preTitle: "Greater Boston",
-      title: "Communities",
-      cta: "Explore Towns",
-      href: "/communities",
-      image: `${PHOTO}/coastal-town-aerial.jpg`,
+      preTitle: "Our Specialty",
+      title: "New Construction",
+      cta: "Explore New Builds",
+      href: "/new-construction",
+      image: `${PHOTO}/new-construction-modern-farmhouse.jpg`,
     },
   ],
   intro: {
@@ -755,6 +797,7 @@ export const site: SiteContent = {
     links: [
       { label: "Home", href: "/" },
       { label: "Property Search", href: "/listings" },
+      { label: "New Construction", href: "/new-construction" },
       { label: "Buy with Us", href: "/buy" },
       { label: "Sell with Us", href: "/sell" },
       { label: "Communities", href: "/communities" },
@@ -770,7 +813,7 @@ export const site: SiteContent = {
     addressLines: ["375 Neponset Ave", "Boston, MA 02122", "(617) 295-7600"],
     newsletter: {
       heading: "Join the List",
-      tagline: "New Listings. Market Data. First Looks.",
+      tagline: "New Construction. Market Data. First Looks.",
       consent:
         "I agree to be contacted by Commonwealth Living Group via call, email, and text for real estate services. To opt out, reply 'stop' at any time or reply 'help' for assistance. You can also click the unsubscribe link in the emails. Message and data rates may apply. Message frequency may vary.",
     },
