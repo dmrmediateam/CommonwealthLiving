@@ -1,6 +1,9 @@
 import type { CSSProperties } from "react";
+import AboutFlow from "@/components/AboutFlow";
 import SiteChrome from "@/components/SiteChrome";
 import ListingsGrid from "@/components/ListingsGrid";
+import HeroMedia from "@/components/home/HeroMedia";
+import Picture from "@/components/Picture";
 import type { GalleryCard, Listing, SiteContent } from "@/content/site";
 
 /* ==========================================================================
@@ -23,15 +26,7 @@ export default function HomeClassic({
       {/* ============ HERO (fullscreen video or image) ============ */}
       <section className="video-section">
         <div className="video-wrapper">
-          {content.hero.video ? (
-            <video poster={content.hero.image} loop muted autoPlay playsInline>
-              {content.hero.video.webm && <source src={content.hero.video.webm} type="video/webm" />}
-              {content.hero.video.mp4 && <source src={content.hero.video.mp4} type="video/mp4" />}
-            </video>
-          ) : (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={content.hero.image} alt="" />
-          )}
+          <HeroMedia image={content.hero.image} video={content.hero.video} />
         </div>
         <div className="overlay-component"></div>
         <div className="middle-content-wrapper">
@@ -61,24 +56,10 @@ export default function HomeClassic({
       {/* ============ SERVICES GALLERY ============ */}
       <GallerySection cards={content.services} columns={3} />
 
-      {/* ============ INTRO TEXT ============ */}
-      <section className="solid-section">
-        <div className="boxed-text lp-vertical-paddings">
-          <div className="lp-container">
-            <h2 className="lp-h2 reveal">{content.intro.title}</h2>
-            <div className="boxed-text__description reveal" data-delay="100">
-              {content.intro.paragraphs.map((text, i) => (
-                <p key={i}>{text}</p>
-              ))}
-            </div>
-            <div className="boxed-text__btn reveal" data-delay="200">
-              <a href={content.intro.ctaHref} className="lp-btn lp-btn--outline">{content.intro.ctaLabel}</a>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* ============ ABOUT — circular portrait, directly under the services ============ */}
+      <AboutFlow content={content} />
 
-      {/* ============ STATS BAND ============ */}
+      {/* ============ STATS BAND — proof points straight after the founder story ============ */}
       {content.stats && (
         <section className="solid-section">
           <div className="stats-band lp-container reveal">
@@ -107,29 +88,35 @@ export default function HomeClassic({
         </section>
       )}
 
-      {/* ============ AREAS GALLERY (overlay cards, hover reveal) ============ */}
-      <GallerySection cards={content.areas} columns={2} variant="overlay" />
-
-      {/* ============ ABOUT — circular portrait, text flows around it ============ */}
+      {/* ============ AREAS GALLERY + intro tile filling the sixth cell ============ */}
       <section className="solid-section">
-        <div className="about-flow lp-vertical-paddings">
+        <div className="gallery-component">
           <div className="lp-container">
-            <div className="about-flow__body reveal">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={content.about.image}
-                alt={content.about.title}
-                className={content.about.imageStyle === "photo" ? "about-flow__photo" : "about-flow__portrait"}
-              />
-              <h2 className="lp-h2">{content.about.title}</h2>
-              <div className="lp-text--subtitle">
-                <h5>{content.about.subtitle}</h5>
-                {content.about.blocks.map((block, i) => (
-                  <div key={i}>
-                    {block.heading && <p><strong>{block.heading}</strong></p>}
-                    <p>{block.text}</p>
+            <div className="gallery-row cols-2">
+              {content.areas.map((card, i) => (
+                <div className="gallery-col reveal" key={card.title} data-delay={i % 2 === 0 ? undefined : 100}>
+                  <a className="gallery-card gallery-card--overlay gallery-card--short" href={card.href}>
+                    <div className="gallery-card__preview">
+                      <Picture src={card.image} alt="" sizes="(max-width: 760px) 92vw, 45vw" />
+                    </div>
+                    <div className="gallery-card__veil"></div>
+                    <div className="gallery-card__panel">
+                      <h3 className="gallery-card__panel-title">{card.title}</h3>
+                      {card.description && <p className="gallery-card__panel-desc">{card.description}</p>}
+                    </div>
+                  </a>
+                </div>
+              ))}
+              <div className="gallery-col reveal" data-delay="100">
+                <div className="intro-tile">
+                  <h2 className="intro-tile__title">{content.intro.title}</h2>
+                  <div className="intro-tile__body">
+                    {content.intro.paragraphs.map((text, i) => (
+                      <p key={i}>{text}</p>
+                    ))}
                   </div>
-                ))}
+                  <a href={content.intro.ctaHref} className="lp-btn intro-tile__btn">{content.intro.ctaLabel}</a>
+                </div>
               </div>
             </div>
           </div>
@@ -178,8 +165,7 @@ function GallerySection({
                 {variant === "overlay" ? (
                   <a className="gallery-card gallery-card--overlay gallery-card--short" href={card.href}>
                     <div className="gallery-card__preview">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={card.image} alt="" loading="lazy" />
+                      <Picture src={card.image} alt="" sizes="(max-width: 760px) 92vw, 45vw" />
                     </div>
                     <div className="gallery-card__veil"></div>
                     <div className="gallery-card__panel">
@@ -190,8 +176,7 @@ function GallerySection({
                 ) : (
                   <a className={`gallery-card${columns === 2 ? " gallery-card--short" : ""}`} href={card.href}>
                     <div className="gallery-card__preview">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={card.image} alt="" loading="lazy" />
+                      <Picture src={card.image} alt="" sizes="(max-width: 760px) 92vw, 45vw" />
                     </div>
                     <div className="gallery-card__label">
                       <div className="gallery-card__text">

@@ -26,7 +26,9 @@ export default function SiteChrome({
     "--navy": content.theme.primary,
     "--navy-90": `rgba(${hexToRgb(content.theme.primary)}, 0.9)`,
     "--taupe": content.theme.secondary,
-    "--taupe-overlay": `rgba(${hexToRgb(content.theme.secondary)}, 0.4)`,
+    // Hero/banner wash: the primary (dark) reads as a cinematic scrim;
+    // the secondary tinted photos toward its own hue.
+    "--taupe-overlay": `rgba(${hexToRgb(content.theme.primary)}, 0.45)`,
     "--cream": content.theme.background,
     background: content.theme.background,
   } as CSSProperties;

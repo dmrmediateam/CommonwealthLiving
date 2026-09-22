@@ -127,6 +127,12 @@ the **Claude in Chrome** connector (the user's real browser, already logged in):
 6. If the Chrome connector isn't available, ask the user to download the shortlist
    manually and drop the files in `public/photos/`.
 
+After adding or replacing any JPEG in `public/`, run `npm run images`: it writes
+`-800.webp`/`-1600.webp` variants beside each file, which `components/Picture.tsx`
+offers ahead of the JPEG. Commit the variants. Hero video: encode to 1600px/24fps
+(h264 CRF32 + VP9) with a poster frame; `components/home/HeroMedia.tsx` paints the
+poster first and attaches the video after load, so the video is never the LCP.
+
 Real photos beat stock: if the client's Zillow/GBP/website has quality original
 photography the user can license, prefer it for listings/areas.
 

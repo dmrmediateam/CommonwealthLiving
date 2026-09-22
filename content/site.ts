@@ -265,7 +265,10 @@ export const site: SiteContent = {
   hero: {
     preTitle: "Greater Boston Luxury Real Estate",
     title: "Where Greater Boston Moves Up",
-    image: `${PHOTO}/hero-new-england-estate.jpg`,
+    // Poster paints first (it is the measured LCP); the video attaches
+    // after load. Re-encode with ffmpeg if the source is ever replaced.
+    image: `${PHOTO}/hero-boston-aerial.jpg`,
+    video: { webm: "/video/boston-aerial.webm", mp4: "/video/boston-aerial.mp4" },
   },
   searchBar: {
     placeholder: "Search by Town or Address",
@@ -361,7 +364,7 @@ export const site: SiteContent = {
         sqft: "4,800",
         status: "For Sale",
         mls: "DEMO-001",
-        image: `${PHOTO}/new-construction-modern-farmhouse.jpg`,
+        image: `${PHOTO}/brick-colonial-lawn.jpg`,
         href: "/search",
       },
       {
@@ -385,7 +388,7 @@ export const site: SiteContent = {
         sqft: "3,650",
         status: "New Construction",
         mls: "DEMO-003",
-        image: `${PHOTO}/farmhouse-black-roof.jpg`,
+        image: `${PHOTO}/new-construction-modern-farmhouse.jpg`,
         href: "/search",
       },
       {
@@ -408,7 +411,7 @@ export const site: SiteContent = {
       type: "listings",
       title: "Featured Listings",
       preTitle: "Active and Recently Sold",
-      heroImage: `${PHOTO}/hero-new-england-estate.jpg`,
+      heroImage: `${PHOTO}/shingle-estate-waterfront.jpg`,
       intro: [
         "The homes we represent across Greater Boston: current listings, new construction, and recent results.",
       ],
@@ -445,7 +448,7 @@ export const site: SiteContent = {
       slug: "sell",
       title: "Sell with Us",
       preTitle: "Data-Driven Pricing, Polished Presentation",
-      heroImage: `${PHOTO}/kitchen-island.jpg`,
+      heroImage: `${PHOTO}/marble-kitchen.jpg`,
       intro: [
         "A home at this price point deserves more than a listing. We price from real comparables, present the property the way today's buyers expect, and put it in front of buyers who are ready to act.",
       ],
@@ -463,7 +466,7 @@ export const site: SiteContent = {
         {
           heading: "Presentation That Earns the Price",
           text: "Staging guidance, professional photography, and a launch plan built for your buyer profile. The first week on market matters most, and we plan for it before the sign goes up.",
-          image: `${PHOTO}/living-room-fireplace.jpg`,
+          image: `${PHOTO}/marble-kitchen.jpg`,
         },
         {
           heading: "A Managed Path to Closing",
@@ -519,12 +522,12 @@ export const site: SiteContent = {
         {
           heading: "Westwood, Walpole, Medfield & Dover",
           text: "Classic New England towns with strong schools, larger lots, and a steady pipeline of new construction, with commuter rail and Route 128 close by.",
-          image: `${PHOTO}/farmhouse-on-lawn.jpg`,
+          image: `${PHOTO}/gated-drive.jpg`,
         },
         {
           heading: "Wellesley, Needham, Newton & Chestnut Hill",
           text: "Some of the most sought-after addresses west of Boston, with walkable village centers, top-rated schools, and a quick trip into the city.",
-          image: `${PHOTO}/victorian-estates-lawn.jpg`,
+          image: `${PHOTO}/brick-colonial-lawn.jpg`,
         },
         {
           heading: "Milton & Brookline",
@@ -534,7 +537,7 @@ export const site: SiteContent = {
         {
           heading: "Hingham, Norwell & Cohasset",
           text: "The South Shore's coastal towns: harbor views, historic centers, and room to spread out, with commuter boat and rail options into the city.",
-          image: `${PHOTO}/shingle-estate-dusk.jpg`,
+          image: `${PHOTO}/waterfront-homes-dock.jpg`,
         },
         {
           heading: "Boston",
@@ -556,7 +559,7 @@ export const site: SiteContent = {
         {
           heading: "Room to Breathe, Close to the City",
           text: "Established neighborhoods and new construction sit side by side here, giving move-up buyers space and privacy without giving up an easy commute.",
-          image: `${PHOTO}/farmhouse-black-roof.jpg`,
+          image: `${PHOTO}/new-construction-modern-farmhouse.jpg`,
         },
         {
           heading: "Neighbors Worth Knowing",
@@ -570,7 +573,7 @@ export const site: SiteContent = {
       slug: "westwood",
       title: "Westwood",
       preTitle: "Classic New England, New Construction",
-      heroImage: `${PHOTO}/farmhouse-on-lawn.jpg`,
+      heroImage: `${PHOTO}/gated-drive.jpg`,
       intro: [
         "Westwood combines a well-regarded school system and a small-town feel with Route 128 and commuter rail access, and it sees a steady flow of new construction.",
       ],
@@ -583,7 +586,7 @@ export const site: SiteContent = {
         {
           heading: "Nearby: Dover, Medfield & Walpole",
           text: "Buyers here often weigh Dover's estate lots, Medfield's village center, and Walpole's value. We walk you through the tradeoffs.",
-          image: `${PHOTO}/victorian-estates-lawn.jpg`,
+          image: `${PHOTO}/shingle-estate-waterfront.jpg`,
         },
       ],
       cta: { label: "Explore Westwood", href: "/connect" },
@@ -592,7 +595,7 @@ export const site: SiteContent = {
       slug: "wellesley",
       title: "Wellesley",
       preTitle: "The MetroWest Standard",
-      heroImage: `${PHOTO}/victorian-estates-lawn.jpg`,
+      heroImage: `${PHOTO}/brick-colonial-lawn.jpg`,
       intro: [
         "Wellesley remains one of Greater Boston's most sought-after towns, with village shopping, top schools, and commuter rail into the city.",
       ],
@@ -600,7 +603,7 @@ export const site: SiteContent = {
         {
           heading: "Competitive by Nature",
           text: "Well-priced Wellesley homes draw strong interest. Buyers who arrive with financing fully structured and a clear read on recent sales are the ones who win.",
-          image: `${PHOTO}/living-room-high-ceiling.jpg`,
+          image: `${PHOTO}/bedroom-suite.jpg`,
         },
         {
           heading: "Nearby: Needham, Newton & Chestnut Hill",
@@ -666,14 +669,14 @@ export const site: SiteContent = {
       title: "Buy with Us",
       cta: "Learn More",
       href: "/buy",
-      image: `${PHOTO}/living-room-black-windows.jpg`,
+      image: `${PHOTO}/foyer-staircase.jpg`,
     },
     {
       preTitle: "Data-Driven Pricing",
       title: "Sell with Us",
       cta: "Learn More",
       href: "/sell",
-      image: `${PHOTO}/colonial-flag.jpg`,
+      image: `${PHOTO}/shingle-estate-waterfront.jpg`,
     },
     {
       preTitle: "Our Specialty",
@@ -704,19 +707,25 @@ export const site: SiteContent = {
       title: "Westwood",
       description: "Strong schools, generous lots, and a steady pipeline of new construction off Route 128.",
       href: "/westwood",
-      image: `${PHOTO}/farmhouse-on-lawn.jpg`,
+      image: `${PHOTO}/gated-drive.jpg`,
     },
     {
       title: "Wellesley",
       description: "Village centers, top-rated schools, and some of the most sought-after addresses west of the city.",
       href: "/wellesley",
-      image: `${PHOTO}/victorian-estates-lawn.jpg`,
+      image: `${PHOTO}/brick-colonial-lawn.jpg`,
     },
     {
       title: "Boston",
       description: "High-end condominiums from Beacon Hill and Back Bay to the Seaport.",
       href: "/boston",
       image: `${PHOTO}/boston-harbor-night.jpg`,
+    },
+    {
+      title: "The South Shore",
+      description: "Hingham, Norwell, and Cohasset: harbor views, historic centers, and room to spread out.",
+      href: "/communities",
+      image: `${PHOTO}/waterfront-homes-dock.jpg`,
     },
   ],
   about: {

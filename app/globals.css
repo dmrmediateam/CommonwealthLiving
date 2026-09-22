@@ -585,6 +585,43 @@ ul { list-style: none; }
 
 .gallery-card--short .gallery-card__preview { aspect-ratio: 4 / 3; }
 
+/* Intro tile: fills the sixth cell of the areas grid, sized like its neighbors */
+.intro-tile {
+  aspect-ratio: 4 / 3;
+  background: var(--navy);
+  color: var(--cream);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: clamp(28px, 4vw, 56px);
+  overflow: hidden;
+}
+.intro-tile__title {
+  font-family: var(--display-font);
+  font-size: clamp(24px, 2.2vw, 34px);
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: 0.5px;
+  margin-bottom: 18px;
+}
+.intro-tile__body p {
+  font-size: 13.5px;
+  line-height: 1.75;
+  color: rgba(250, 249, 247, 0.85);
+  margin-bottom: 12px;
+}
+.intro-tile__btn {
+  margin-top: 8px;
+  background: transparent;
+  border: 1px solid var(--cream);
+  color: var(--cream);
+}
+.intro-tile__btn:hover { background: var(--cream); color: var(--navy); }
+@media (max-width: 768px) {
+  .intro-tile { aspect-ratio: auto; padding: 34px 26px; }
+}
+
 .gallery-card__preview img {
   width: 100%;
   height: 100%;
@@ -3273,4 +3310,24 @@ a:hover > .hn-link::after,
 }
 .form-error, .listing-detail__inquiry-error {
   margin-top: 10px; font-size: 12px; color: #a4453a;
+}
+
+/* ---------- Hero: poster first, video after load ------------------------ */
+/* The poster is a <picture>, inline by default, so it would not fill the
+   wrapper. The video arrives later and lies over it, so the swap is unseen. */
+.video-section .video-wrapper picture {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+
+.video-section .video-wrapper video {
+  position: absolute;
+  inset: 0;
+  animation: hero-video-in 600ms ease both;
+}
+
+@keyframes hero-video-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
