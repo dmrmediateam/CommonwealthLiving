@@ -14,6 +14,9 @@ export function generateStaticParams() {
 
 export const dynamicParams = false;
 
+/** Area pages show a tidy 3 x 3 block of the town feed, then paginate. */
+const TOWN_PAGE_SIZE = 9;
+
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const page = site.pages.find((p) => p.slug === slug);
@@ -32,7 +35,9 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
   // so the grid is filled (and indexable) before the client takes over.
   const marketResponse =
     page.marketSearch && idxConfigured()
-      ? await searchListings({ city: page.marketSearch.city, status: "active" }).catch(() => null)
+      ? await searchListings({ city: page.marketSearch.city, status: "active", pageSize: TOWN_PAGE_SIZE }).catch(
+          () => null,
+        )
       : null;
   return (
     <SubPageView

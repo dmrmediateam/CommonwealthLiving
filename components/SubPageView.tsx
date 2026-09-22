@@ -105,7 +105,9 @@ export default function SubPageView({
                     </h2>
                   </div>
                   <ListingsBrowser
-                    initialFilters={{ city: page.marketSearch.city, status: "active" } as SearchFilters}
+                    initialFilters={
+                      { city: page.marketSearch.city, status: "active", pageSize: 9 } as SearchFilters
+                    }
                     initialResponse={marketResponse ?? null}
                   />
                 </div>
