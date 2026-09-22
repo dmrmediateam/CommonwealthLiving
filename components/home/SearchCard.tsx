@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { Listing } from "@/content/site";
 
 /* ==========================================================================
@@ -42,6 +42,12 @@ export default function SearchCard({
   const [neighborhoods, setNeighborhoods] = useState<Array<{ value: string; label: string }>>([]);
   const blurTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const fetched = useRef(false);
+  const loadIndexRef = useRef<(() => void) | null>(null);
+
+  useEffect(() => {
+    loadIndexRef.current?.();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const loadIndex = () => {
     if (fetched.current) return;
@@ -54,6 +60,8 @@ export default function SearchCard({
       })
       .catch(() => {});
   };
+
+  loadIndexRef.current = loadIndex;
 
   const ownProperties = useMemo<Suggestion[]>(
     () =>
@@ -78,14 +86,19 @@ export default function SearchCard({
 
   const suggestions = useMemo<Suggestion[]>(() => {
     const term = query.trim().toLowerCase();
-    if (!term) return pages.slice(0, 5).map(asSearch);
+    if (!term) return pages.map(asSearch);
 
     const matches = (text: string) => text.toLowerCase().includes(term);
     const startsWith = (text: string) => text.toLowerCase().startsWith(term);
 
+    const pageMatches = pages
+      .filter((p) => matches(p.label))
+      .sort((a, b) => Number(startsWith(b.label)) - Number(startsWith(a.label)) || a.label.length - b.label.length)
+      .map(asSearch);
+
     const out: Suggestion[] = [
       ...ownProperties.filter((p) => matches(p.label)),
-      ...pages.filter((p) => matches(p.label)).map(asSearch),
+      ...pageMatches,
     ];
 
     // Rank: names that start with the term first, then shortest (the
@@ -123,7 +136,7 @@ export default function SearchCard({
         seen.add(key);
         return true;
       })
-      .slice(0, 8);
+      .slice(0, 10);
   }, [query, cities, neighborhoods, ownProperties, pages]);
 
   const submit = (event?: { preventDefault(): void }) => {

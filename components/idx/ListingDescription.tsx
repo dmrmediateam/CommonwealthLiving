@@ -30,7 +30,6 @@ export default function ListingDescription({ text }: { text: string }) {
       <p ref={ref} className="listing-detail__description listing-desc__text">
         {text}
       </p>
-      {clampable && !expanded && <span className="listing-desc__fade" aria-hidden="true" />}
       {clampable && (
         <button
           type="button"

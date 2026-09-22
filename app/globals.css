@@ -3392,6 +3392,9 @@ a:hover > .hn-link::after,
   box-shadow: 0 18px 40px rgba(0, 0, 0, 0.14);
   z-index: 60;
   padding: 6px 0;
+  /* The full market list is offered before typing, so it scrolls */
+  max-height: 330px;
+  overflow-y: auto;
 }
 
 .search-suggest a {
@@ -3431,33 +3434,38 @@ a:hover > .hn-link::after,
    of the card, rather than a bare label floating past a divider.
    ========================================================================== */
 
-.search-bar { padding-right: 0; overflow: hidden; }
+.search-bar { padding-right: 14px; overflow: visible; }
 
 .search-bar .contact-section {
-  align-self: stretch;
-  padding: 0 34px;
-  margin-left: 24px;
-  border-left: 0;
-  background: var(--navy);
-  color: var(--white);
-  border: 0;
+  align-self: center;
+  margin-left: 22px;
+  padding: 13px 26px;
+  border: 1px solid rgba(0, 0, 0, 0.16);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--navy);
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: border-color 0.3s ease, color 0.3s ease, background-color 0.3s ease;
 }
 
-.search-bar .contact-section:hover { background: color-mix(in srgb, var(--navy), white 16%); }
+.search-bar .contact-section:hover {
+  border-color: var(--taupe);
+  color: var(--taupe);
+  background: color-mix(in srgb, var(--taupe), transparent 94%);
+}
 
 .search-bar .contact-section .link-label {
-  font-size: 11.5px;
+  font-size: 11px;
   font-weight: 600;
-  letter-spacing: 2.2px;
+  letter-spacing: 2.4px;
 }
 
-.search-bar .contact-section .icon-style svg { width: 16px; height: 16px; }
+.search-bar .contact-section .icon-style { margin-left: 10px; }
+.search-bar .contact-section .icon-style svg { width: 15px; height: 15px; }
 
 @media (max-width: 768px) {
-  .search-bar { padding-left: 20px; }
-  .search-bar .contact-section { padding: 0 20px; margin-left: 12px; }
+  .search-bar { padding-left: 18px; padding-right: 10px; }
+  .search-bar .contact-section { margin-left: 8px; padding: 11px 16px; }
 }
 
 /* ==========================================================================
@@ -3502,30 +3510,94 @@ a:hover > .hn-link::after,
 
 .idx-filters__location button:hover { background: color-mix(in srgb, var(--navy), white 16%); }
 
-.idx-filters select {
+/* Custom listbox: the native select popup could not be styled to match */
+.fsel { position: relative; }
+
+.fsel__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  min-width: 132px;
   height: 46px;
-  min-width: 118px;
-  padding: 0 38px 0 15px;
-  border-color: rgba(0, 0, 0, 0.14);
-  border-radius: 0;
+  padding: 0 15px;
+  background: var(--white);
+  border: 1px solid rgba(0, 0, 0, 0.14);
+  font-family: var(--body-font);
   font-size: 12.5px;
   letter-spacing: 0.8px;
-  color: var(--navy);
-  -webkit-appearance: none;
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8' fill='none' stroke='%23555' stroke-width='1.4'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 15px center;
-  background-size: 11px 7px;
-  transition: border-color 0.2s ease;
+  color: #6d6d6d;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease;
 }
 
-.idx-filters select:hover { border-color: rgba(0, 0, 0, 0.32); }
-.idx-filters select:focus-visible { outline: 2px solid var(--taupe); outline-offset: 1px; }
+.fsel__button.has-value { color: var(--navy); }
+.fsel__button:hover { border-color: rgba(0, 0, 0, 0.34); }
+.fsel.is-open .fsel__button { border-color: var(--navy); color: var(--navy); }
+.fsel__button:focus-visible { outline: 2px solid var(--taupe); outline-offset: 1px; }
+
+.fsel__chevron {
+  width: 7px;
+  height: 7px;
+  flex: 0 0 auto;
+  border-right: 1.3px solid currentColor;
+  border-bottom: 1.3px solid currentColor;
+  transform: rotate(45deg) translate(-2px, -2px);
+  transition: transform 0.25s ease;
+}
+
+.fsel.is-open .fsel__chevron { transform: rotate(225deg) translate(-2px, -2px); }
+
+.fsel__menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  min-width: 100%;
+  white-space: nowrap;
+  background: var(--white);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.16);
+  padding: 6px 0;
+  z-index: 70;
+  max-height: 320px;
+  overflow-y: auto;
+  animation: fsel-in 0.16s ease both;
+}
+
+.fsel__menu--left { left: 0; }
+.fsel__menu--right { right: 0; }
+
+@keyframes fsel-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fsel__option {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 10px 18px;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  font-family: var(--body-font);
+  font-size: 13px;
+  letter-spacing: 0.4px;
+  color: var(--navy);
+  transition: background-color 0.15s ease;
+}
+
+.fsel__option.is-active { background: color-mix(in srgb, var(--cream), black 4%); }
+
+.fsel__option.is-selected {
+  font-weight: 600;
+  color: var(--taupe);
+}
 
 @media (max-width: 760px) {
   .idx-filters { gap: 8px; padding: 12px; }
-  .idx-filters select { flex: 1 1 calc(50% - 4px); min-width: 0; }
+  .fsel { flex: 1 1 calc(50% - 4px); min-width: 0; }
+  .fsel__button { min-width: 0; }
 }
 
 /* Pagination: square, evenly sized controls that line up with the grid */
@@ -3562,34 +3634,30 @@ a:hover > .hn-link::after,
 /* ---------- Listing description: clamped with a fade, expands on click --- */
 .listing-desc { position: relative; }
 
+/* The text itself fades out, so it works on any background and never leaves
+   a visible band the way an overlaid gradient did. */
 .listing-desc__text {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 6;
   overflow: hidden;
+  -webkit-mask-image: linear-gradient(to bottom, #000 45%, rgba(0, 0, 0, 0.35) 78%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 45%, rgba(0, 0, 0, 0.35) 78%, transparent 100%);
 }
 
 .listing-desc.is-open .listing-desc__text {
   display: block;
   -webkit-line-clamp: unset;
   overflow: visible;
-}
-
-.listing-desc__fade {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 42px;
-  height: 92px;
-  pointer-events: none;
-  background: linear-gradient(to bottom, rgba(255, 255, 255, 0), var(--cream) 88%);
+  -webkit-mask-image: none;
+  mask-image: none;
 }
 
 .listing-desc__toggle {
   display: inline-flex;
   align-items: center;
   gap: 9px;
-  margin-top: 14px;
+  margin: 18px auto 0;
   padding: 0;
   background: none;
   border: 0;
@@ -3604,6 +3672,10 @@ a:hover > .hn-link::after,
 }
 
 .listing-desc__toggle:hover { color: var(--navy); }
+
+/* Centered under the text, with room for the fade to finish */
+.listing-desc { display: flex; flex-direction: column; align-items: center; }
+.listing-desc .listing-desc__text { width: 100%; }
 
 .listing-desc__chevron {
   width: 7px;

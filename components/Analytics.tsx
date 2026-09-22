@@ -28,13 +28,8 @@ export default function Analytics() {
   useEffect(() => {
     /*
      * One delegated listener instead of an onClick on every phone/email link.
-     * Three separate widget surfaces each needing their own copy of the same
-     * handler is exactly how the last tracking gap happened.
-     *
-     * composedPath() is the important part: IDX renders its widgets inside
-     * shadow roots, and a click there arrives with event.target retargeted to
-     * the custom element, so `closest("a")` on target finds nothing. The
-     * composed path still contains the real anchor.
+     * composedPath() rather than event.target: it survives any retargeting
+     * and costs nothing here.
      */
     const onClick = (event: MouseEvent) => {
       const path = event.composedPath?.() ?? [];
@@ -59,17 +54,10 @@ export default function Analytics() {
         });
         return;
       }
-      // A listing card click inside an IDX widget: high-intent browsing, and
-      // the only signal we get from inside the widget's shadow root.
+      // Listing card click: high-intent browsing. Every listing surface on
+      // this site is our own UI over the IDX API, never an embedded widget.
       if (/^\/listing\//.test(href)) {
-        const insideWidget = path.some(
-          (node) =>
-            node instanceof HTMLElement && node.tagName.toLowerCase().startsWith("idx-"),
-        );
-        trackEvent("listing_view", {
-          listing_path: href,
-          source: insideWidget ? "idx_widget" : "site",
-        });
+        trackEvent("listing_view", { listing_path: href, source: "site" });
       }
     };
 

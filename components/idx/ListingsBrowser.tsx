@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
+import FilterSelect from "@/components/idx/FilterSelect";
 import IdxListingCard from "@/components/idx/IdxListingCard";
 import { filtersFromParams, paramsFromFilters } from "@/lib/idx/filterParams";
 import type { SearchFilters, SearchResponse } from "@/lib/idx/types";
@@ -162,70 +163,75 @@ function SearchFiltersBar({
         </button>
       </div>
 
-      <select
-        value={filters.minPrice ?? ""}
-        onChange={(e) => onApply({ minPrice: e.target.value ? Number(e.target.value) : undefined })}
-        aria-label="Minimum price"
-      >
-        <option value="">Min Price</option>
-        {[250000, 500000, 750000, 1000000, 2000000, 3000000, 5000000, 10000000].map((v) => (
-          <option value={v} key={v}>${(v / 1000000 >= 1 ? `${v / 1000000}M` : `${v / 1000}K`)}</option>
-        ))}
-      </select>
+      <FilterSelect
+        ariaLabel="Minimum price"
+        placeholder="Min Price"
+        value={filters.minPrice ? String(filters.minPrice) : ""}
+        onChange={(v) => onApply({ minPrice: v ? Number(v) : undefined })}
+        options={[
+          { value: "", label: "Any Min" },
+          ...[250000, 500000, 750000, 1000000, 2000000, 3000000, 5000000, 10000000].map((v) => ({
+            value: String(v),
+            label: priceLabel(v),
+          })),
+        ]}
+      />
 
-      <select
-        value={filters.maxPrice ?? ""}
-        onChange={(e) => onApply({ maxPrice: e.target.value ? Number(e.target.value) : undefined })}
-        aria-label="Maximum price"
-      >
-        <option value="">Max Price</option>
-        {[500000, 750000, 1000000, 2000000, 3000000, 5000000, 10000000, 20000000].map((v) => (
-          <option value={v} key={v}>${(v / 1000000 >= 1 ? `${v / 1000000}M` : `${v / 1000}K`)}</option>
-        ))}
-      </select>
+      <FilterSelect
+        ariaLabel="Maximum price"
+        placeholder="Max Price"
+        value={filters.maxPrice ? String(filters.maxPrice) : ""}
+        onChange={(v) => onApply({ maxPrice: v ? Number(v) : undefined })}
+        options={[
+          { value: "", label: "Any Max" },
+          ...[500000, 750000, 1000000, 2000000, 3000000, 5000000, 10000000, 20000000].map((v) => ({
+            value: String(v),
+            label: priceLabel(v),
+          })),
+        ]}
+      />
 
-      <select
-        value={filters.minBeds ?? ""}
-        onChange={(e) => onApply({ minBeds: e.target.value ? Number(e.target.value) : undefined })}
-        aria-label="Minimum bedrooms"
-      >
-        <option value="">Beds</option>
-        {[1, 2, 3, 4, 5, 6].map((v) => (
-          <option value={v} key={v}>{v}+</option>
-        ))}
-      </select>
+      <FilterSelect
+        ariaLabel="Minimum bedrooms"
+        placeholder="Beds"
+        value={filters.minBeds ? String(filters.minBeds) : ""}
+        onChange={(v) => onApply({ minBeds: v ? Number(v) : undefined })}
+        options={[{ value: "", label: "Any Beds" }, ...[1, 2, 3, 4, 5, 6].map((v) => ({ value: String(v), label: `${v}+ Beds` }))]}
+      />
 
-      <select
-        value={filters.minBaths ?? ""}
-        onChange={(e) => onApply({ minBaths: e.target.value ? Number(e.target.value) : undefined })}
-        aria-label="Minimum bathrooms"
-      >
-        <option value="">Baths</option>
-        {[1, 2, 3, 4, 5].map((v) => (
-          <option value={v} key={v}>{v}+</option>
-        ))}
-      </select>
+      <FilterSelect
+        ariaLabel="Minimum bathrooms"
+        placeholder="Baths"
+        value={filters.minBaths ? String(filters.minBaths) : ""}
+        onChange={(v) => onApply({ minBaths: v ? Number(v) : undefined })}
+        options={[{ value: "", label: "Any Baths" }, ...[1, 2, 3, 4, 5].map((v) => ({ value: String(v), label: `${v}+ Baths` }))]}
+      />
 
-      <select
+      <FilterSelect
+        ariaLabel="Listing status"
+        placeholder="For Sale"
         value={filters.status ?? "active"}
-        onChange={(e) => onApply({ status: e.target.value as SearchFilters["status"] })}
-        aria-label="Listing status"
-      >
-        <option value="active">For Sale</option>
-        <option value="pending">Pending</option>
-        <option value="sold">Sold</option>
-      </select>
+        onChange={(v) => onApply({ status: v as SearchFilters["status"] })}
+        options={[
+          { value: "active", label: "For Sale" },
+          { value: "pending", label: "Pending" },
+          { value: "sold", label: "Sold" },
+        ]}
+      />
 
-      <select
+      <FilterSelect
+        ariaLabel="Sort order"
+        align="right"
+        placeholder="Sort"
         value={filters.sort ?? ""}
-        onChange={(e) => onApply({ sort: (e.target.value || undefined) as SearchFilters["sort"] })}
-        aria-label="Sort order"
-      >
-        <option value="">Sort</option>
-        <option value="priceDesc">Price: High to Low</option>
-        <option value="priceAsc">Price: Low to High</option>
-        <option value="sqftDesc">Largest First</option>
-      </select>
+        onChange={(v) => onApply({ sort: (v || undefined) as SearchFilters["sort"] })}
+        options={[
+          { value: "", label: "Newest" },
+          { value: "priceDesc", label: "Price: High to Low" },
+          { value: "priceAsc", label: "Price: Low to High" },
+          { value: "sqftDesc", label: "Largest First" },
+        ]}
+      />
     </div>
   );
 }
@@ -265,4 +271,9 @@ function Pagination({
       <button type="button" disabled={page >= totalPages} onClick={() => onPage(page + 1)}>Next</button>
     </nav>
   );
+}
+
+/** $750K, $1.5M: the compact form the filter menus use. */
+function priceLabel(value: number): string {
+  return value >= 1000000 ? `$${value / 1000000}M` : `$${value / 1000}K`;
 }
