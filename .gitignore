@@ -13,3 +13,4 @@ Typeform - Results Table.pdf
 .env
 .env*.local
 .env.local
+.vercel

@@ -57,7 +57,7 @@ export default function HomeClassic({
       <GallerySection cards={content.services} columns={3} />
 
       {/* ============ ABOUT — circular portrait, directly under the services ============ */}
-      <AboutFlow content={content} />
+      <AboutFlow content={content} cta={{ label: "Work With Tom", href: content.cta.buttonHref }} />
 
       {/* ============ STATS BAND — proof points straight after the founder story ============ */}
       {content.stats && (

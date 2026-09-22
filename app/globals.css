@@ -133,8 +133,15 @@ ul { list-style: none; }
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 40px;
-  min-height: 62px;
+  padding: 16px 48px;
+  min-height: 78px;
+  transition: padding 0.35s ease, min-height 0.35s ease;
+}
+
+/* Tightens once it turns solid, so the hero keeps the full-height version */
+.navbar.scrolled .header {
+  padding: 10px 48px;
+  min-height: 64px;
 }
 
 .header__left, .header__right {
@@ -3330,4 +3337,44 @@ a:hover > .hn-link::after,
 @keyframes hero-video-in {
   from { opacity: 0; }
   to { opacity: 1; }
+}
+
+/* About block CTA (homepage): centered under the bio, matching its rhythm */
+.about-flow__cta {
+  margin-top: 34px;
+  text-align: center;
+}
+
+/* ---------- Navbar links: balanced either side of the centered logo ------ */
+.navigation__link span {
+  font-size: 11.5px;
+  letter-spacing: 1.9px;
+}
+
+/* The last right-hand link is the contact CTA: outlined so it reads as the
+   action, not another link. Its underline hover is suppressed. */
+.header__right .navigation__item:last-child .navigation__link {
+  border: 1px solid currentColor;
+  padding: 9px 18px;
+  border-radius: 999px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.header__right .navigation__item:last-child .navigation__link span { padding-bottom: 0; }
+.header__right .navigation__item:last-child .navigation__link span::after { display: none; }
+
+.header__right .navigation__item:last-child .navigation__link:hover {
+  background: var(--white);
+  color: var(--navy);
+}
+
+.navbar.scrolled .header__right .navigation__item:last-child .navigation__link:hover {
+  background: var(--navy);
+  color: var(--white);
+}
+
+/* Six links plus a centered lockup need the width; below it the side menu
+   (which carries every page) takes over. */
+@media (max-width: 1100px) {
+  .navbar .header, .navbar.scrolled .header { padding-left: 24px; padding-right: 24px; }
 }

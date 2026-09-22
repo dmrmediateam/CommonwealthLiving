@@ -11,10 +11,13 @@ import type { SiteContent } from "@/content/site";
 export default function AboutFlow({
   content,
   showHeading = true,
+  cta,
 }: {
   content: SiteContent;
   /** Drop the h2 where the page's own h1 already says the same thing */
   showHeading?: boolean;
+  /** Optional button under the bio (the homepage uses it to route to contact) */
+  cta?: { label: string; href: string };
 }) {
   return (
     <section className="solid-section">
@@ -40,6 +43,11 @@ export default function AboutFlow({
                   <p>{block.text}</p>
                 </div>
               ))}
+              {cta && (
+                <div className="about-flow__cta">
+                  <a href={cta.href} className="lp-btn lp-btn--outline">{cta.label}</a>
+                </div>
+              )}
             </div>
           </div>
         </div>

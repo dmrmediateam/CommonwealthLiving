@@ -286,21 +286,23 @@ export const site: SiteContent = {
     ctaHref: "/connect",
   },
   nav: {
+    // Balanced around the centered logo: what you do on the left,
+    // where and who on the right.
     left: [
-      { label: "Featured Listings", href: "/listings" },
+      { label: "Property Search", href: "/listings" },
       { label: "Buy With Us", href: "/buy" },
       { label: "Sell With Us", href: "/sell" },
     ],
     right: [
-      { label: "New Construction", href: "/new-construction" },
+      { label: "Communities", href: "/communities" },
+      { label: "Meet the Team", href: "/team" },
       { label: "Let’s Connect", href: "/connect" },
     ],
     menu: [
       { label: "Home", href: "/" },
-      { label: "Featured Listings", href: "/listings" },
+      { label: "Property Search", href: "/listings" },
       { label: "Buy with Us", href: "/buy" },
       { label: "Sell with Us", href: "/sell" },
-      { label: "New Construction", href: "/new-construction" },
       {
         label: "Communities",
         href: "/communities",
@@ -312,7 +314,6 @@ export const site: SiteContent = {
         ],
       },
       { label: "Meet the Team", href: "/team" },
-      { label: "Search", href: "/search" },
       { label: "Let's Connect", href: "/connect" },
     ],
   },
@@ -384,7 +385,7 @@ export const site: SiteContent = {
         status: "For Sale",
         mls: "DEMO-001",
         image: `${PHOTO}/brick-colonial-lawn.jpg`,
-        href: "/search",
+        href: "/listings",
       },
       {
         price: "$1,450,000",
@@ -396,7 +397,7 @@ export const site: SiteContent = {
         status: "For Sale",
         mls: "DEMO-002",
         image: `${PHOTO}/colonial-black-shutters.jpg`,
-        href: "/search",
+        href: "/listings",
       },
       {
         price: "$1,275,000",
@@ -408,7 +409,7 @@ export const site: SiteContent = {
         status: "New Construction",
         mls: "DEMO-003",
         image: `${PHOTO}/new-construction-modern-farmhouse.jpg`,
-        href: "/search",
+        href: "/listings",
       },
       {
         price: "$1,650,000",
@@ -420,7 +421,7 @@ export const site: SiteContent = {
         status: "For Sale",
         mls: "DEMO-004",
         image: `${PHOTO}/living-room-black-windows.jpg`,
-        href: "/search",
+        href: "/listings",
       },
     ],
   },
@@ -496,33 +497,6 @@ export const site: SiteContent = {
       cta: { label: "Request a Valuation", href: "/connect" },
       valuation: true,
       valuationImage: `${PHOTO}/shingle-estate-dusk.jpg`,
-    },
-    {
-      slug: "new-construction",
-      title: "New Construction",
-      preTitle: "New Builds Across Greater Boston",
-      heroImage: `${PHOTO}/new-construction-modern-farmhouse.jpg`,
-      intro: [
-        "New construction is one of our core focuses. From a single infill home in Canton or Westwood to a new neighborhood on the South Shore, we help buyers weigh the builder, the contract, and the numbers before they commit.",
-      ],
-      sections: [
-        {
-          heading: "Representation on Your Side",
-          text: "The sales office represents the builder. Having your own agent costs you nothing in most new construction purchases, and it puts someone in your corner for pricing, upgrades, and contract terms.",
-          image: `${PHOTO}/new-construction-site.jpg`,
-        },
-        {
-          heading: "Financing a Build",
-          text: "Construction timelines change how you finance. Tom's mortgage background helps you plan rate locks, deposits, and closing dates around the build schedule instead of reacting to it.",
-          image: `${PHOTO}/tom-tomasian-office.jpg`,
-        },
-        {
-          heading: "Inspections at Every Stage",
-          text: "New does not mean flawless. We encourage independent inspections before drywall and before closing, and we track the punch list through to completion.",
-          image: `${PHOTO}/living-room-two-story.jpg`,
-        },
-      ],
-      cta: { label: "Ask About New Builds", href: "/connect" },
     },
     {
       slug: "communities",
@@ -665,7 +639,6 @@ export const site: SiteContent = {
       ],
       cta: { label: "Work With Us", href: "/connect" },
     },
-    { slug: "search", type: "search", title: "Search Properties", preTitle: "Every Listing, One Place", heroImage: `${PHOTO}/boston-skyline-night.jpg` },
     {
       slug: "connect",
       type: "connect",
@@ -688,21 +661,21 @@ export const site: SiteContent = {
       title: "Buy with Us",
       cta: "Learn More",
       href: "/buy",
-      image: `${PHOTO}/foyer-staircase.jpg`,
+      image: `${PHOTO}/interior-dining-chandelier.jpg`,
     },
     {
       preTitle: "Data-Driven Pricing",
       title: "Sell with Us",
       cta: "Learn More",
       href: "/sell",
-      image: `${PHOTO}/shingle-estate-waterfront.jpg`,
+      image: `${PHOTO}/brick-manor-gates.jpg`,
     },
     {
-      preTitle: "Our Specialty",
-      title: "New Construction",
-      cta: "Explore New Builds",
-      href: "/new-construction",
-      image: `${PHOTO}/new-construction-modern-farmhouse.jpg`,
+      preTitle: "Greater Boston",
+      title: "Communities",
+      cta: "Explore Towns",
+      href: "/communities",
+      image: `${PHOTO}/coastal-town-aerial.jpg`,
     },
   ],
   intro: {
@@ -781,10 +754,9 @@ export const site: SiteContent = {
     brokerage: "Real Broker MA, LLC",
     links: [
       { label: "Home", href: "/" },
-      { label: "Featured Listings", href: "/listings" },
+      { label: "Property Search", href: "/listings" },
       { label: "Buy with Us", href: "/buy" },
       { label: "Sell with Us", href: "/sell" },
-      { label: "New Construction", href: "/new-construction" },
       { label: "Communities", href: "/communities" },
       { label: "Meet the Team", href: "/team" },
       { label: "Let's Connect", href: "/connect" },
