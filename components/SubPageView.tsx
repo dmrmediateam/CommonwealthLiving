@@ -1,8 +1,10 @@
 import SiteChrome from "@/components/SiteChrome";
 import ContactForm from "@/components/leads/ContactForm";
 import ListingsGrid from "@/components/ListingsGrid";
+import ListingsBrowser from "@/components/idx/ListingsBrowser";
 import PropertySearchExperience from "@/components/PropertySearchExperience";
 import ValuationWizard from "@/components/ValuationWizard";
+import type { SearchFilters, SearchResponse } from "@/lib/idx/types";
 import type { Listing, SiteContent, SubPage } from "@/content/site";
 
 /** Interior page: banner hero + editorial sections, or search/connect/listings variants */
@@ -10,11 +12,14 @@ export default function SubPageView({
   content,
   page,
   liveListings,
+  marketResponse,
   idxEnabled = false,
 }: {
   content: SiteContent;
   page: SubPage;
   liveListings?: Listing[] | null;
+  /** First page of the town feed for pages that declare `marketSearch` */
+  marketResponse?: SearchResponse | null;
   /** True when the deployment has an IDX Broker key configured */
   idxEnabled?: boolean;
 }) {
@@ -107,6 +112,24 @@ export default function SubPageView({
               </div>
             </section>
           ))}
+          {page.marketSearch && idxEnabled && (
+            <section className="solid-section">
+              <div className="featured-band lp-vertical-paddings">
+                <div className="lp-container">
+                  <div className="featured-band__head reveal">
+                    <span className="featured-band__kicker">Live from the MLS</span>
+                    <h2 className="lp-h2">
+                      {page.marketSearch.heading ?? `Homes for Sale in ${page.marketSearch.city}`}
+                    </h2>
+                  </div>
+                  <ListingsBrowser
+                    initialFilters={{ city: page.marketSearch.city, status: "active" } as SearchFilters}
+                    initialResponse={marketResponse ?? null}
+                  />
+                </div>
+              </div>
+            </section>
+          )}
           {page.showListings && listings.length > 0 && (
             <section className="solid-section">
               <div className="featured-band lp-vertical-paddings">

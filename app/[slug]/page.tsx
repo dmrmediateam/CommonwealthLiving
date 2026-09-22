@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import SubPageView from "@/components/SubPageView";
 import { getFeaturedListings } from "@/lib/idxbroker";
 import { idxConfigured } from "@/lib/idx/config";
+import { searchListings } from "@/lib/idx/search";
 import { site } from "@/content/site";
 
 export function generateStaticParams() {
@@ -27,5 +28,19 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
   const page = site.pages.find((p) => p.slug === slug);
   if (!page) notFound();
   const liveListings = page.type === "listings" || page.showListings ? await getFeaturedListings() : null;
-  return <SubPageView idxEnabled={idxConfigured()} liveListings={liveListings} content={site} page={page} />;
+  // Area pages carry a live town search; render its first page on the server
+  // so the grid is filled (and indexable) before the client takes over.
+  const marketResponse =
+    page.marketSearch && idxConfigured()
+      ? await searchListings({ city: page.marketSearch.city, status: "active" }).catch(() => null)
+      : null;
+  return (
+    <SubPageView
+      idxEnabled={idxConfigured()}
+      liveListings={liveListings}
+      marketResponse={marketResponse}
+      content={site}
+      page={page}
+    />
+  );
 }

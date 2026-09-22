@@ -67,6 +67,12 @@ export interface SubPage {
   showListings?: boolean;
   /** Render the working property search (filters + results) on this page */
   search?: boolean;
+  /**
+   * Live MLS search scoped to one town, for area pages: "Homes for Sale in
+   * Canton", filterable, refreshed from the feed rather than hand-listed.
+   * The name must match the town as the MLS spells it.
+   */
+  marketSearch?: { city: string; heading?: string };
   /** Prepend the 3-step "What's your property worth?" wizard (e.g. sell) */
   valuation?: boolean;
   /** Full-bleed background for the valuation wizard (defaults to heroImage) */
@@ -287,9 +293,8 @@ export const site: SiteContent = {
     video: { webm: "/video/boston-aerial.webm", mp4: "/video/boston-aerial.mp4" },
   },
   searchBar: {
-    // The button runs the search now, so it says so.
-    placeholder: "Search by Town, Neighborhood, or Address",
-    ctaLabel: "Search Homes",
+    placeholder: "Search by address, neighborhood, or town",
+    ctaLabel: "Search",
     ctaHref: "/listings",
   },
   nav: {
@@ -325,17 +330,9 @@ export const site: SiteContent = {
       { label: "Let's Connect", href: "/connect" },
     ],
   },
-  // MLS PIN returns only broad categories, so the search menu mirrors them.
-  idx: {
-    // Client brief: luxury focus, nothing under $800K.
-    minPrice: 800000,
-    propertyTypes: [
-      { value: "", label: "Any Type" },
-      { value: "residential", label: "Homes" },
-      { value: "residential income", label: "Multi-Family" },
-      { value: "land", label: "Land" },
-    ],
-  },
+  // Luxury focus per the client brief: nothing under $800K in the browse feed
+  // unless a visitor sets their own minimum.
+  idx: { minPrice: 800000 },
   contact: { phone: "(617) 295-7600", email: "tom@clghomes.com" },
   team: {
     tagline: "A small team with a big-market record.",
@@ -472,7 +469,6 @@ export const site: SiteContent = {
         },
       ],
       cta: { label: "Start Your Search", href: "/connect" },
-      search: true,
     },
     {
       slug: "sell",
@@ -584,6 +580,7 @@ export const site: SiteContent = {
     },
     {
       slug: "canton",
+      marketSearch: { city: "Canton" },
       title: "Canton",
       preTitle: "Our Home Base",
       heroImage: `${PHOTO}/colonial-black-shutters.jpg`,
@@ -606,6 +603,7 @@ export const site: SiteContent = {
     },
     {
       slug: "westwood",
+      marketSearch: { city: "Westwood" },
       title: "Westwood",
       preTitle: "Classic New England, New Construction",
       heroImage: `${PHOTO}/gated-drive.jpg`,
@@ -628,6 +626,7 @@ export const site: SiteContent = {
     },
     {
       slug: "wellesley",
+      marketSearch: { city: "Wellesley" },
       title: "Wellesley",
       preTitle: "The MetroWest Standard",
       heroImage: `${PHOTO}/brick-colonial-lawn.jpg`,
@@ -650,6 +649,7 @@ export const site: SiteContent = {
     },
     {
       slug: "boston",
+      marketSearch: { city: "Boston" },
       title: "Boston",
       preTitle: "High-End Condominiums",
       heroImage: `${PHOTO}/boston-zakim-night.jpg`,

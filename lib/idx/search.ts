@@ -191,7 +191,10 @@ export async function searchListings(filters: SearchFilters): Promise<SearchResp
         aw_zipcode: filters.postalCode,
         aw_subdivision: filters.subdivision,
         aw_areaName: filters.mlsArea,
-        propStatus: statusParam(filters.status),
+        // The filter bar shows "For Sale" when nothing is chosen, so an unset
+        // status must mean active; leaving it undefined returned pending and
+        // sold listings under a For Sale label.
+        propStatus: statusParam(filters.status ?? 'active'),
         lp: filters.minPrice,
         hp: filters.maxPrice,
         bd: filters.minBeds,

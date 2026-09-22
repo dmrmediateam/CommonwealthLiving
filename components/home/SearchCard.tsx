@@ -67,16 +67,25 @@ export default function SearchCard({
     [listings],
   );
 
+
+  /** This is a property search, so a town goes to results, not to its page. */
+  const asSearch = (entry: Suggestion): Suggestion => {
+    const city = cities.find((c) => c.name.toLowerCase() === entry.label.toLowerCase());
+    return city
+      ? { ...entry, href: `/listings?city=${encodeURIComponent(city.name)}` }
+      : entry;
+  };
+
   const suggestions = useMemo<Suggestion[]>(() => {
     const term = query.trim().toLowerCase();
-    if (!term) return pages.slice(0, 5);
+    if (!term) return pages.slice(0, 5).map(asSearch);
 
     const matches = (text: string) => text.toLowerCase().includes(term);
     const startsWith = (text: string) => text.toLowerCase().startsWith(term);
 
     const out: Suggestion[] = [
       ...ownProperties.filter((p) => matches(p.label)),
-      ...pages.filter((p) => matches(p.label)),
+      ...pages.filter((p) => matches(p.label)).map(asSearch),
     ];
 
     // Rank: names that start with the term first, then shortest (the
@@ -104,7 +113,17 @@ export default function SearchCard({
       });
     }
 
-    return out.slice(0, 8);
+    // One entry per destination: a town can arrive as both a community page
+    // and an MLS city.
+    const seen = new Set<string>();
+    return out
+      .filter((entry) => {
+        const key = `${entry.href}|${entry.label.toLowerCase()}`;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      })
+      .slice(0, 8);
   }, [query, cities, neighborhoods, ownProperties, pages]);
 
   const submit = (event?: { preventDefault(): void }) => {
