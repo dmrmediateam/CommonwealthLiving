@@ -9,13 +9,30 @@ const STATUS_LABEL: Record<string, string> = {
 };
 
 /** MLS listing card: same anatomy as the static ListingsGrid card */
-export default function IdxListingCard({ listing }: { listing: ListingSummary }) {
+export default function IdxListingCard({
+  listing,
+  priority = false,
+}: {
+  listing: ListingSummary;
+  /** Set on the first row so it paints with the page */
+  priority?: boolean;
+}) {
   return (
     <a className="listing-card" href={listing.detailUrl}>
       <div className="listing-card__media">
         {listing.primaryPhoto ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={listing.primaryPhoto.url} alt={listing.address.full} loading="lazy" />
+          <img
+            src={listing.primaryPhoto.url}
+            alt={listing.address.full}
+            /* The first row is above the fold on most screens: lazy-loading it
+               left the grid visibly filling in after paint. */
+            loading={priority ? "eager" : "lazy"}
+            fetchPriority={priority ? "high" : undefined}
+            decoding="async"
+            width={640}
+            height={427}
+          />
         ) : (
           <div className="listing-card__nophoto">Photo Coming Soon</div>
         )}

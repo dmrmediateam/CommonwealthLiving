@@ -128,7 +128,12 @@ export default function SiteChrome({
         <div className="footer">
           <div className="footer__layout container">
             <div className="footer__col footer__col--brand">
-              <h2 className="footer__wordmark">{content.brand.name}</h2>
+              {content.brand.logo ? (
+                /* eslint-disable-next-line @next/next/no-img-element */
+                <img className="footer__logo" src={content.brand.logo.dark} alt={content.brand.name} />
+              ) : (
+                <h2 className="footer__wordmark">{content.brand.name}</h2>
+              )}
               <div className="footer__agent">
                 <p>{content.footer.agentName}<br /><strong>{content.footer.brokerage}</strong></p>
               </div>

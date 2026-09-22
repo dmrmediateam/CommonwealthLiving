@@ -149,6 +149,13 @@ function suggestionPages(content: SiteContent): { label: string; kind: string; h
     kind: "Community",
     href: area.href,
   }));
+  // Every town the team works, searchable immediately: the MLS location index
+  // only arrives after the first focus, and some markets have no page here.
+  const markets = (content.idx?.markets ?? []).map((town) => ({
+    label: town,
+    kind: "Community",
+    href: `/listings?city=${encodeURIComponent(town)}`,
+  }));
   const guides = content.pages
     .filter((page) => ["communities", "new-construction"].includes(page.slug))
     .map((page) => ({
@@ -157,9 +164,10 @@ function suggestionPages(content: SiteContent): { label: string; kind: string; h
       href: `/${page.slug}`,
     }));
   const seen = new Set<string>();
-  return [...areas, ...guides].filter((entry) => {
-    if (seen.has(entry.href)) return false;
-    seen.add(entry.href);
+  return [...areas, ...markets, ...guides].filter((entry) => {
+    const key = entry.label.toLowerCase();
+    if (seen.has(key)) return false;
+    seen.add(key);
     return true;
   });
 }

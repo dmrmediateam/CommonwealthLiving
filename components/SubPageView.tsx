@@ -94,24 +94,6 @@ export default function SubPageView({
               propertyTypeOptions={content.idx?.propertyTypes}
             />
           )}
-          {page.sections?.map((section, i) => (
-            <section className="solid-section" key={section.heading}>
-              <div className={`split-section lp-vertical-paddings${i % 2 === 1 ? " split-section--flip" : ""}`}>
-                <div className="lp-container split-section__row">
-                  {section.image && (
-                    <div className="split-section__media reveal">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={section.image} alt="" loading="lazy" />
-                    </div>
-                  )}
-                  <div className="split-section__text reveal" data-delay="100">
-                    <h2 className="lp-h2">{section.heading}</h2>
-                    <p>{section.text}</p>
-                  </div>
-                </div>
-              </div>
-            </section>
-          ))}
           {page.marketSearch && idxEnabled && (
             <section className="solid-section">
               <div className="featured-band lp-vertical-paddings">
@@ -130,6 +112,24 @@ export default function SubPageView({
               </div>
             </section>
           )}
+          {page.sections?.map((section, i) => (
+            <section className="solid-section" key={section.heading}>
+              <div className={`split-section lp-vertical-paddings${i % 2 === 1 ? " split-section--flip" : ""}`}>
+                <div className="lp-container split-section__row">
+                  {section.image && (
+                    <div className="split-section__media reveal">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={section.image} alt="" loading="lazy" />
+                    </div>
+                  )}
+                  <div className="split-section__text reveal" data-delay="100">
+                    <h2 className="lp-h2">{section.heading}</h2>
+                    <p>{section.text}</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+          ))}
           {page.showListings && listings.length > 0 && (
             <section className="solid-section">
               <div className="featured-band lp-vertical-paddings">

@@ -2,6 +2,7 @@ import type { SiteContent } from "@/content/site";
 import ListingInquiryForm from "@/components/leads/ListingInquiryForm";
 import type { ListingDetail } from "@/lib/idx/types";
 import { formatPrice, formatSqFt } from "@/lib/idx/display";
+import ListingDescription from "@/components/idx/ListingDescription";
 import ListingGallery from "@/components/idx/ListingGallery";
 
 const STATUS_LABEL: Record<string, string> = {
@@ -50,7 +51,7 @@ export default function ListingDetailBody({ listing, content }: { listing: Listi
           {listing.description && (
             <section className="listing-detail__section">
               <h2 className="lp-h2">About This Home</h2>
-              <p className="listing-detail__description">{listing.description}</p>
+              <ListingDescription text={listing.description} />
             </section>
           )}
 

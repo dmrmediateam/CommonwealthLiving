@@ -175,6 +175,8 @@ export interface SiteContent {
      * everything; this only stops a luxury site from opening on starter homes.
      */
     minPrice?: number;
+    /** Towns to offer in the homepage autocomplete (the client's markets) */
+    markets?: string[];
     /**
      * Property-type menu for the on-page search. Values must match what the
      * client's MLS actually returns (MLS PIN, for instance, has no subtypes:
@@ -301,12 +303,12 @@ export const site: SiteContent = {
     // Balanced around the centered logo: what you do on the left,
     // where and who on the right.
     left: [
-      { label: "Property Search", href: "/listings" },
-      { label: "New Construction", href: "/new-construction" },
+      { label: "Sell With Us", href: "/sell" },
       { label: "Buy With Us", href: "/buy" },
+      { label: "New Construction", href: "/new-construction" },
     ],
     right: [
-      { label: "Sell With Us", href: "/sell" },
+      { label: "Property Search", href: "/listings" },
       { label: "Communities", href: "/communities" },
       { label: "Let’s Connect", href: "/connect" },
     ],
@@ -332,7 +334,17 @@ export const site: SiteContent = {
   },
   // Luxury focus per the client brief: nothing under $800K in the browse feed
   // unless a visitor sets their own minimum.
-  idx: { minPrice: 800000 },
+  idx: {
+    minPrice: 800000,
+    // Towns the team works. They power the homepage autocomplete, so every
+    // one is searchable the moment the page loads, before the MLS location
+    // index arrives. Keep in step with IDX_MARKET_CITIES.
+    markets: [
+      "Canton", "Westwood", "Sharon", "Milton", "Needham", "Newton",
+      "Chestnut Hill", "Wellesley", "Dover", "Brookline", "Easton",
+      "Hingham", "Norwell", "Cohasset", "Walpole", "Medfield", "Boston",
+    ],
+  },
   contact: { phone: "(617) 295-7600", email: "tom@clghomes.com" },
   team: {
     tagline: "A small team with a big-market record.",

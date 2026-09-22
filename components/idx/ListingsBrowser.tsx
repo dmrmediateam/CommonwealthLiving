@@ -101,8 +101,8 @@ export default function ListingsBrowser({
       </p>
 
       <div className={`listings-grid${loading ? " listings-grid--loading" : ""}`}>
-        {response?.listings.map((listing) => (
-          <IdxListingCard listing={listing} key={`${listing.idxId}-${listing.listingId}`} />
+        {response?.listings.map((listing, i) => (
+          <IdxListingCard listing={listing} priority={i < 3} key={`${listing.idxId}-${listing.listingId}`} />
         ))}
       </div>
 
