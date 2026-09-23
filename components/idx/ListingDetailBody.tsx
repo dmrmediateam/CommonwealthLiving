@@ -3,6 +3,7 @@ import ListingInquiryForm from "@/components/leads/ListingInquiryForm";
 import type { ListingDetail } from "@/lib/idx/types";
 import { formatPrice, formatSqFt } from "@/lib/idx/display";
 import ListingDescription from "@/components/idx/ListingDescription";
+import ListingLeadGate from "@/components/idx/ListingLeadGate";
 import ListingGallery from "@/components/idx/ListingGallery";
 
 const STATUS_LABEL: Record<string, string> = {
@@ -112,6 +113,12 @@ export default function ListingDetailBody({ listing, content }: { listing: Listi
           />
         </aside>
       </div>
+
+      <ListingLeadGate
+        address={listing.address.full}
+        listingId={listing.mlsNumber}
+        photo={listing.photos[0]?.url}
+      />
     </article>
   );
 }

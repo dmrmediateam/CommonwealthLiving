@@ -195,6 +195,20 @@ export interface SiteContent {
      */
     propertyTypes?: { value: string; label: string }[];
   };
+  /**
+   * Lead-capture gate on listing detail pages. The page renders in full
+   * underneath; the overlay appears for human visitors (never crawlers) once
+   * they have opened `freeViews` listings without leaving their details.
+   */
+  listingGate?: {
+    enabled: boolean;
+    /** Listing pages a visitor may open before the gate appears */
+    freeViews: number;
+    /** Allow closing it without registering */
+    dismissible: boolean;
+    heading?: string;
+    subheading?: string;
+  };
   /** Contact details for the connect page and footer */
   contact?: { phone?: string; email?: string };
   /**
@@ -366,6 +380,16 @@ export const site: SiteContent = {
       "Hingham", "Norwell", "Cohasset", "Walpole", "Medfield", "Boston",
     ],
   },
+  listingGate: {
+    enabled: true,
+    // Two listings to browse before we ask: enough to show the search is
+    // real, early enough to catch the visitor while they are interested.
+    freeViews: 2,
+    dismissible: true,
+    heading: "See Full Property Details",
+    subheading:
+      "Register once for complete listing information, photos, and first look at new Greater Boston listings.",
+  },
   contact: { phone: "(617) 295-7600", email: "tom@clghomes.com" },
   team: {
     tagline: "A small team with a big-market record.",
@@ -410,42 +434,14 @@ export const site: SiteContent = {
     lastUpdated: "September 2026",
   },
   /**
-   * Recent sales, entered by hand and verified against the team's Zillow
-   * profile. They are not in the IDX feed: MLS PIN sold data needs the sold
-   * paperwork approved on the IDX account, and until that happens no sold
-   * listing (or its photos) comes through the API. Replace this band with
-   * live listings as soon as the team has active ones.
+   * Homepage band. The listings come from IDX at request time: the team's own
+   * first (IDX Featured, then `idx.agentIds`), and until they have some, the
+   * highest-priced active listings across their markets. Nothing is
+   * hand-entered, so the band simply hides if the feed is unavailable.
    */
   featured: {
-    title: "Recent Sales",
-    subtitle: "Represented the Buyer",
-    listings: [
-      {
-        price: "$620,000",
-        address: "57 Marks St, Rockland, MA",
-        beds: "3",
-        baths: "2",
-        sqft: "1,846",
-        status: "Sold",
-        mls: "73552763",
-        image: "",
-        href: "/connect",
-      },
-      {
-        price: "$675,000",
-        address: "61-63 Broad St, Weymouth, MA",
-        status: "Sold",
-        image: "",
-        href: "/connect",
-      },
-      {
-        price: "$420,000",
-        address: "41 Vershire St, West Roxbury, MA",
-        status: "Sold",
-        image: "",
-        href: "/connect",
-      },
-    ],
+    title: "Featured Listings",
+    subtitle: "Live from the MLS",
   },
   pages: [
     {

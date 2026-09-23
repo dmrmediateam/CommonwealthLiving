@@ -72,9 +72,30 @@ export async function getFeaturedListings(): Promise<Listing[] | null> {
       })
       .filter((listing) => listing.price && listing.image);
     if (listings.length > 0) return listings;
-    return teamListings();
+    return (await teamListings()) ?? marketListings();
   } catch {
-    return teamListings();
+    return (await teamListings()) ?? marketListings();
+  }
+}
+
+/**
+ * The top of the market, live from the MLS.
+ *
+ * Shown when the team has nothing of their own in the feed yet: the most
+ * expensive active listings across their towns, which is what a luxury
+ * homepage band is for. Never placeholders.
+ */
+async function marketListings(): Promise<Listing[] | null> {
+  if (!process.env.IDX_API_KEY) return null;
+  try {
+    const response = await searchListings({ status: "active", sort: "priceDesc", pageSize: 12 });
+    const listings = response.listings
+      .filter((listing) => listing.primaryPhoto?.url)
+      .slice(0, 6)
+      .map(toConfigListing);
+    return listings.length > 0 ? listings : null;
+  } catch {
+    return null;
   }
 }
 
