@@ -11,11 +11,19 @@ export default function ListingsGrid({ listings }: { listings: Listing[] }) {
           key={listing.mls ?? listing.address}
           data-delay={i % 3 === 0 ? undefined : (i % 3) * 100}
         >
-          <div className="listing-card__media">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={listing.image} alt={listing.address} loading="lazy" />
+          {/* A sold record the MLS will not give us a photo for still earns a
+              card: the sale itself is the content. */}
+          <div className={`listing-card__media${listing.image ? "" : " listing-card__media--plain"}`}>
+            {listing.image ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={listing.image} alt={listing.address} loading="lazy" />
+            ) : (
+              <span className="listing-card__mark" aria-hidden="true">
+                {listing.status ?? "Sold"}
+              </span>
+            )}
             <div className="listing-card__badges">
-              {listing.status && <span>{listing.status}</span>}
+              {listing.image && listing.status && <span>{listing.status}</span>}
               {listing.mls && <span>MLS&reg; {listing.mls}</span>}
             </div>
           </div>

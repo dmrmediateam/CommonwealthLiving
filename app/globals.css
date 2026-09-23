@@ -3837,3 +3837,34 @@ textarea {
     font-size: 16px;
   }
 }
+
+/* Licensed-photo attribution: present, never shouting */
+.photo-credit,
+.photo-credits {
+  margin: 14px auto 0;
+  font-family: var(--body-font);
+  font-size: 11px;
+  line-height: 1.6;
+  color: color-mix(in srgb, var(--taupe), transparent 25%);
+}
+
+.photo-credits { margin-top: 30px; max-width: 900px; }
+.photo-credit a,
+.photo-credits a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+
+/* Card without a photograph: the record stands on its own */
+.listing-card__media--plain {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(140deg, var(--navy), color-mix(in srgb, var(--navy), white 16%));
+}
+
+.listing-card__mark {
+  font-family: var(--heading-font);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--taupe);
+}

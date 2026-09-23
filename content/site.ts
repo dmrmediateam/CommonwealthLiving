@@ -54,8 +54,8 @@ export interface TeamMember {
 export interface SubPage {
   /** URL segment, e.g. "buy" */
   slug: string;
-  /** "standard" = editorial; "search" = IDX search; "connect" = contact; "listings" = listing grid; "team" = roster */
-  type?: "standard" | "search" | "connect" | "listings" | "team";
+  /** "standard" = editorial; "search" = IDX search; "connect" = contact; "listings" = listing grid; "team" = roster; "communities" = town cards */
+  type?: "standard" | "search" | "connect" | "listings" | "team" | "communities";
   title: string;
   preTitle?: string;
   heroImage: string;
@@ -73,6 +73,8 @@ export interface SubPage {
    * The name must match the town as the MLS spells it.
    */
   marketSearch?: { city: string; heading?: string };
+  /** Attribution for a licensed photograph used on this page */
+  photoCredit?: { author: string; license: string; source: string };
   /** Prepend the 3-step "What's your property worth?" wizard (e.g. sell) */
   valuation?: boolean;
   /** Full-bleed background for the valuation wizard (defaults to heroImage) */
@@ -224,6 +226,11 @@ export interface SiteContent {
   /** Optional proof-point band rendered after the intro (e.g. "40+ / Years") */
   stats?: { value: string; label: string }[];
   services: GalleryCard[];
+  /**
+   * Every town the team covers, as cards: photo, hover description, and a
+   * link to that town's page. Rendered by a page with type: "communities".
+   */
+  communities?: GalleryCard[];
   intro: {
     title: string;
     paragraphs: string[];
@@ -402,59 +409,41 @@ export const site: SiteContent = {
     stateCivilRightsAgency: "the Massachusetts Commission Against Discrimination (MCAD)",
     lastUpdated: "September 2026",
   },
-  // PLACEHOLDER listings (DEMO- ids): shown until IDX Broker is connected.
-  // Replace with the team's real active listings before launch.
+  /**
+   * Recent sales, entered by hand and verified against the team's Zillow
+   * profile. They are not in the IDX feed: MLS PIN sold data needs the sold
+   * paperwork approved on the IDX account, and until that happens no sold
+   * listing (or its photos) comes through the API. Replace this band with
+   * live listings as soon as the team has active ones.
+   */
   featured: {
-    title: "Featured Properties",
-    subtitle: "Active Listings",
+    title: "Recent Sales",
+    subtitle: "Represented the Buyer",
     listings: [
       {
-        price: "$1,895,000",
-        address: "Sample Listing · Wellesley",
-        propertyType: "residential",
-        beds: "5",
-        baths: "4.5",
-        sqft: "4,800",
-        status: "For Sale",
-        mls: "DEMO-001",
-        image: `${PHOTO}/brick-colonial-lawn.jpg`,
-        href: "/listings",
-      },
-      {
-        price: "$1,450,000",
-        address: "Sample Listing · Westwood",
-        propertyType: "residential",
-        beds: "4",
-        baths: "3.5",
-        sqft: "3,900",
-        status: "For Sale",
-        mls: "DEMO-002",
-        image: `${PHOTO}/colonial-black-shutters.jpg`,
-        href: "/listings",
-      },
-      {
-        price: "$1,275,000",
-        address: "Sample Listing · Canton",
-        propertyType: "residential",
-        beds: "4",
-        baths: "3.5",
-        sqft: "3,650",
-        status: "For Sale",
-        mls: "DEMO-003",
-        image: `${PHOTO}/new-construction-modern-farmhouse.jpg`,
-        href: "/listings",
-      },
-      {
-        price: "$1,650,000",
-        address: "Sample Listing · Boston, Back Bay",
-        propertyType: "residential",
-        beds: "2",
+        price: "$620,000",
+        address: "57 Marks St, Rockland, MA",
+        beds: "3",
         baths: "2",
-        sqft: "1,550",
-        status: "For Sale",
-        mls: "DEMO-004",
-        image: `${PHOTO}/living-room-black-windows.jpg`,
-        href: "/listings",
+        sqft: "1,846",
+        status: "Sold",
+        mls: "73552763",
+        image: "",
+        href: "/connect",
+      },
+      {
+        price: "$675,000",
+        address: "61-63 Broad St, Weymouth, MA",
+        status: "Sold",
+        image: "",
+        href: "/connect",
+      },
+      {
+        price: "$420,000",
+        address: "41 Vershire St, West Roxbury, MA",
+        status: "Sold",
+        image: "",
+        href: "/connect",
       },
     ],
   },
@@ -564,6 +553,7 @@ export const site: SiteContent = {
     },
     {
       slug: "communities",
+      type: "communities",
       title: "Communities",
       preTitle: "Greater Boston, Town by Town",
       heroImage: `${PHOTO}/new-england-autumn-aerial.jpg`,
@@ -607,9 +597,14 @@ export const site: SiteContent = {
     {
       slug: "canton",
       marketSearch: { city: "Canton" },
+      photoCredit: {
+        author: "Dougtone",
+        license: "CC BY-SA 2.0",
+        source: "https://commons.wikimedia.org/wiki/File:Canton,_Massachusetts_-_16132606534.jpg",
+      },
       title: "Canton",
       preTitle: "Our Home Base",
-      heroImage: `${PHOTO}/colonial-black-shutters.jpg`,
+      heroImage: `${PHOTO}/towns/canton.jpg`,
       intro: [
         "Canton is where our team is rooted. It pairs wooded, private lots and the Blue Hills Reservation with fast highway and commuter rail access to Boston.",
       ],
@@ -630,9 +625,14 @@ export const site: SiteContent = {
     {
       slug: "westwood",
       marketSearch: { city: "Westwood" },
+      photoCredit: {
+        author: "John Phelan",
+        license: "CC BY-SA 4.0",
+        source: "https://commons.wikimedia.org/wiki/File:First_Parish_Westwood_Meeting_House,_Westwood_MA.jpg",
+      },
       title: "Westwood",
       preTitle: "Classic New England, New Construction",
-      heroImage: `${PHOTO}/gated-drive.jpg`,
+      heroImage: `${PHOTO}/towns/westwood.jpg`,
       intro: [
         "Westwood combines a well-regarded school system and a small-town feel with Route 128 and commuter rail access, and it sees a steady flow of new construction.",
       ],
@@ -653,9 +653,14 @@ export const site: SiteContent = {
     {
       slug: "wellesley",
       marketSearch: { city: "Wellesley" },
+      photoCredit: {
+        author: "John Phelan",
+        license: "CC BY 3.0",
+        source: "https://commons.wikimedia.org/wiki/File:Central_Street,_Wellesley_MA.jpg",
+      },
       title: "Wellesley",
       preTitle: "The MetroWest Standard",
-      heroImage: `${PHOTO}/brick-colonial-lawn.jpg`,
+      heroImage: `${PHOTO}/towns/wellesley.jpg`,
       intro: [
         "Wellesley remains one of Greater Boston's most sought-after towns, with village shopping, top schools, and commuter rail into the city.",
       ],
@@ -676,9 +681,14 @@ export const site: SiteContent = {
     {
       slug: "boston",
       marketSearch: { city: "Boston" },
+      photoCredit: {
+        author: "King of Hearts",
+        license: "CC BY-SA 4.0",
+        source: "https://commons.wikimedia.org/wiki/File:Back_Bay_Fens_Boston_November_2016_001.jpg",
+      },
       title: "Boston",
       preTitle: "High-End Condominiums",
-      heroImage: `${PHOTO}/boston-zakim-night.jpg`,
+      heroImage: `${PHOTO}/towns/boston.jpg`,
       intro: [
         "In the city, our focus is luxury condominiums: full-service buildings, penthouses, and boutique brownstone conversions across Boston's most established neighborhoods.",
       ],
@@ -695,6 +705,204 @@ export const site: SiteContent = {
         },
       ],
       cta: { label: "Explore Boston Condos", href: "/connect" },
+    },
+    {
+      slug: "sharon",
+      title: "Sharon",
+      preTitle: "Greater Boston",
+      heroImage: `${PHOTO}/towns/sharon.jpg`,
+      photoCredit: {
+        author: "John Phelan",
+        license: "CC BY 3.0",
+        source: "https://commons.wikimedia.org/wiki/File:Historical_Society,_Sharon_MA.jpg",
+      },
+      marketSearch: { city: "Sharon" },
+      intro: [
+        "Conservation land and Lake Massapoag, with a commuter rail stop roughly midway between Boston and Providence.",
+      ],
+      cta: { label: "Ask About Sharon", href: "/connect" },
+    },
+    {
+      slug: "milton",
+      title: "Milton",
+      preTitle: "Greater Boston",
+      heroImage: `${PHOTO}/towns/milton.jpg`,
+      photoCredit: {
+        author: "Jameslwoodward",
+        license: "CC BY-SA 3.0",
+        source: "https://commons.wikimedia.org/wiki/File:Belcher-Rowe_House_Milton_MA.jpg",
+      },
+      marketSearch: { city: "Milton" },
+      intro: [
+        "Directly on Boston's southern edge, with the Blue Hills Reservation behind it and classic New England housing close to the city.",
+      ],
+      cta: { label: "Ask About Milton", href: "/connect" },
+    },
+    {
+      slug: "needham",
+      title: "Needham",
+      preTitle: "Greater Boston",
+      heroImage: `${PHOTO}/towns/needham.jpg`,
+      photoCredit: {
+        author: "John Phelan",
+        license: "CC BY 3.0",
+        source: "https://commons.wikimedia.org/wiki/File:Davis_Mills_House,_Needham_MA.jpg",
+      },
+      marketSearch: { city: "Needham" },
+      intro: [
+        "A walkable town center, well-regarded schools and quick access to Route 128 and the Needham line.",
+      ],
+      cta: { label: "Ask About Needham", href: "/connect" },
+    },
+    {
+      slug: "newton",
+      title: "Newton",
+      preTitle: "Greater Boston",
+      heroImage: `${PHOTO}/brick-colonial-lawn.jpg`,
+      marketSearch: { city: "Newton" },
+      intro: [
+        "A city of thirteen villages west of Boston, each with its own center, and one of the region's most established addresses.",
+      ],
+      cta: { label: "Ask About Newton", href: "/connect" },
+    },
+    {
+      slug: "chestnut-hill",
+      title: "Chestnut Hill",
+      preTitle: "Greater Boston",
+      heroImage: `${PHOTO}/gated-drive.jpg`,
+      marketSearch: { city: "Chestnut Hill" },
+      intro: [
+        "Spanning parts of Newton, Brookline and Boston: large lots, reservoir walks and first-rate shopping.",
+      ],
+      cta: { label: "Ask About Chestnut Hill", href: "/connect" },
+    },
+    {
+      slug: "dover",
+      title: "Dover",
+      preTitle: "Greater Boston",
+      heroImage: `${PHOTO}/towns/dover.jpg`,
+      photoCredit: {
+        author: "John Phelan",
+        license: "CC BY-SA 3.0",
+        source: "https://commons.wikimedia.org/wiki/File:Central_Avenue_Centre_Street_bridge_over_the_Charles_River,_Dover_MA.jpg",
+      },
+      marketSearch: { city: "Dover" },
+      intro: [
+        "One of the most private towns within Route 128's reach: large parcels, conservation land and the Charles River along its northern edge.",
+      ],
+      cta: { label: "Ask About Dover", href: "/connect" },
+    },
+    {
+      slug: "brookline",
+      title: "Brookline",
+      preTitle: "Greater Boston",
+      heroImage: `${PHOTO}/towns/brookline.jpg`,
+      photoCredit: {
+        author: "Arnab Majumdar",
+        license: "CC BY-SA 3.0",
+        source: "https://commons.wikimedia.org/wiki/File:Aspinwall_Hill,_Brookline,_MA,_USA_-_panoramio_(1).jpg",
+      },
+      marketSearch: { city: "Brookline" },
+      intro: [
+        "Wrapped around Boston's western edge, with brick apartment houses, Victorians and Green Line service downtown.",
+      ],
+      cta: { label: "Ask About Brookline", href: "/connect" },
+    },
+    {
+      slug: "easton",
+      title: "Easton",
+      preTitle: "Greater Boston",
+      heroImage: `${PHOTO}/towns/easton.jpg`,
+      photoCredit: {
+        author: "Marcbela",
+        license: "CC0",
+        source: "https://commons.wikimedia.org/wiki/File:Ames_Mansion_Borderland.jpg",
+      },
+      marketSearch: { city: "Easton" },
+      intro: [
+        "More land for the money than the towns north of it, with H. H. Richardson's stone buildings at its center and Borderland on its western edge.",
+      ],
+      cta: { label: "Ask About Easton", href: "/connect" },
+    },
+    {
+      slug: "hingham",
+      title: "Hingham",
+      preTitle: "Greater Boston",
+      heroImage: `${PHOTO}/towns/hingham.jpg`,
+      photoCredit: {
+        author: "John Phelan",
+        license: "CC BY-SA 3.0",
+        source: "https://commons.wikimedia.org/wiki/File:Accord_Pond,_Hingham_MA.jpg",
+      },
+      marketSearch: { city: "Hingham" },
+      intro: [
+        "A harbor, a historic Main Street and a commuter boat to Boston: among the South Shore's most sought-after towns.",
+      ],
+      cta: { label: "Ask About Hingham", href: "/connect" },
+    },
+    {
+      slug: "norwell",
+      title: "Norwell",
+      preTitle: "Greater Boston",
+      heroImage: `${PHOTO}/towns/norwell.jpg`,
+      photoCredit: {
+        author: "John Phelan",
+        license: "CC BY-SA 3.0",
+        source: "https://commons.wikimedia.org/wiki/File:Accord_Pond,_Hingham_MA.jpg",
+      },
+      marketSearch: { city: "Norwell" },
+      intro: [
+        "Quieter and more wooded than its coastal neighbors, with larger lots and easy access to Route 3.",
+      ],
+      cta: { label: "Ask About Norwell", href: "/connect" },
+    },
+    {
+      slug: "cohasset",
+      title: "Cohasset",
+      preTitle: "Greater Boston",
+      heroImage: `${PHOTO}/towns/cohasset.jpg`,
+      photoCredit: {
+        author: "Wwoods",
+        license: "CC BY-SA 3.0",
+        source: "https://commons.wikimedia.org/wiki/File:Cohasset_common;2007-08-03.jpg",
+      },
+      marketSearch: { city: "Cohasset" },
+      intro: [
+        "A coastal village around a common and harbor, with Greenbush commuter rail into the city.",
+      ],
+      cta: { label: "Ask About Cohasset", href: "/connect" },
+    },
+    {
+      slug: "walpole",
+      title: "Walpole",
+      preTitle: "Greater Boston",
+      heroImage: `${PHOTO}/towns/walpole.jpg`,
+      photoCredit: {
+        author: "John Phelan",
+        license: "CC BY-SA 4.0",
+        source: "https://commons.wikimedia.org/wiki/File:E_Walpole_Market_and_Deli,_East_Walpole_MA.jpg",
+      },
+      marketSearch: { city: "Walpole" },
+      intro: [
+        "Value relative to its neighbors, with two commuter rail stops and quick access to Route 1 and I-95.",
+      ],
+      cta: { label: "Ask About Walpole", href: "/connect" },
+    },
+    {
+      slug: "medfield",
+      title: "Medfield",
+      preTitle: "Greater Boston",
+      heroImage: `${PHOTO}/towns/medfield.jpg`,
+      photoCredit: {
+        author: "John Phelan",
+        license: "CC BY 4.0",
+        source: "https://commons.wikimedia.org/wiki/File:First_Parish_Unitarian_Universalist_Church_and_North_Street,_Medfield_MA.jpg",
+      },
+      marketSearch: { city: "Medfield" },
+      intro: [
+        "A village center and open space along the Charles, with the city about forty minutes away.",
+      ],
+      cta: { label: "Ask About Medfield", href: "/connect" },
     },
     {
       slug: "team",
@@ -722,6 +930,110 @@ export const site: SiteContent = {
     { value: "300+", label: "Homes Sold, Collective Team Experience" },
     { value: "$180M+", label: "In Collective Sales Volume" },
     { value: "#4", label: "Small Team in Boston, RealTrends 2026" },
+  ],
+  communities: [
+    {
+      title: "Canton",
+      description: "Our home base. Wooded, private lots with the Blue Hills at the town's back, and highway and commuter rail access that keeps Boston close.",
+      href: "/canton",
+      image: `${PHOTO}/towns/canton.jpg`,
+    },
+    {
+      title: "Westwood",
+      description: "Strong schools, generous lots and a steady pipeline of new construction, with Route 128 and University Station at hand.",
+      href: "/westwood",
+      image: `${PHOTO}/towns/westwood.jpg`,
+    },
+    {
+      title: "Wellesley",
+      description: "Village shopping, top-rated schools and some of the most sought-after addresses west of the city.",
+      href: "/wellesley",
+      image: `${PHOTO}/towns/wellesley.jpg`,
+    },
+    {
+      title: "Boston",
+      description: "High-end condominiums from Beacon Hill and Back Bay to the Seaport and the South End.",
+      href: "/boston",
+      image: `${PHOTO}/towns/boston.jpg`,
+    },
+    {
+      title: "Sharon",
+      description: "Conservation land and Lake Massapoag, with a commuter rail stop roughly midway between Boston and Providence.",
+      href: "/sharon",
+      image: `${PHOTO}/towns/sharon.jpg`,
+    },
+    {
+      title: "Milton",
+      description: "Directly on Boston's southern edge, with the Blue Hills Reservation behind it and classic New England housing close to the city.",
+      href: "/milton",
+      image: `${PHOTO}/towns/milton.jpg`,
+    },
+    {
+      title: "Needham",
+      description: "A walkable town center, well-regarded schools and quick access to Route 128 and the Needham line.",
+      href: "/needham",
+      image: `${PHOTO}/towns/needham.jpg`,
+    },
+    {
+      title: "Newton",
+      description: "A city of thirteen villages west of Boston, each with its own center, and one of the region's most established addresses.",
+      href: "/newton",
+      image: `${PHOTO}/brick-colonial-lawn.jpg`,
+    },
+    {
+      title: "Chestnut Hill",
+      description: "Spanning parts of Newton, Brookline and Boston: large lots, reservoir walks and first-rate shopping.",
+      href: "/chestnut-hill",
+      image: `${PHOTO}/gated-drive.jpg`,
+    },
+    {
+      title: "Dover",
+      description: "One of the most private towns within Route 128's reach: large parcels, conservation land and the Charles River along its northern edge.",
+      href: "/dover",
+      image: `${PHOTO}/towns/dover.jpg`,
+    },
+    {
+      title: "Brookline",
+      description: "Wrapped around Boston's western edge, with brick apartment houses, Victorians and Green Line service downtown.",
+      href: "/brookline",
+      image: `${PHOTO}/towns/brookline.jpg`,
+    },
+    {
+      title: "Easton",
+      description: "More land for the money than the towns north of it, with H. H. Richardson's stone buildings at its center and Borderland on its western edge.",
+      href: "/easton",
+      image: `${PHOTO}/towns/easton.jpg`,
+    },
+    {
+      title: "Hingham",
+      description: "A harbor, a historic Main Street and a commuter boat to Boston: among the South Shore's most sought-after towns.",
+      href: "/hingham",
+      image: `${PHOTO}/towns/hingham.jpg`,
+    },
+    {
+      title: "Norwell",
+      description: "Quieter and more wooded than its coastal neighbors, with larger lots and easy access to Route 3.",
+      href: "/norwell",
+      image: `${PHOTO}/towns/norwell.jpg`,
+    },
+    {
+      title: "Cohasset",
+      description: "A coastal village around a common and harbor, with Greenbush commuter rail into the city.",
+      href: "/cohasset",
+      image: `${PHOTO}/towns/cohasset.jpg`,
+    },
+    {
+      title: "Walpole",
+      description: "Value relative to its neighbors, with two commuter rail stops and quick access to Route 1 and I-95.",
+      href: "/walpole",
+      image: `${PHOTO}/towns/walpole.jpg`,
+    },
+    {
+      title: "Medfield",
+      description: "A village center and open space along the Charles, with the city about forty minutes away.",
+      href: "/medfield",
+      image: `${PHOTO}/towns/medfield.jpg`,
+    },
   ],
   services: [
     {

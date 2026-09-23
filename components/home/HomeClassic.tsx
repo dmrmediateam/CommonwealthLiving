@@ -44,7 +44,7 @@ export default function HomeClassic({
           placeholder={content.searchBar.placeholder}
           ctaLabel={content.searchBar.ctaLabel}
           ctaHref={content.searchBar.ctaHref}
-          listings={featuredListings.filter((l) => !l.mls?.startsWith("DEMO"))}
+          listings={featuredListings}
           pages={suggestionPages(content)}
         />
       </section>

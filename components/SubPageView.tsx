@@ -75,8 +75,20 @@ export default function SubPageView({
         </section>
       )}
 
+      {page.photoCredit && (
+        <p className="photo-credit lp-container">
+          Photo:{" "}
+          <a href={page.photoCredit.source} target="_blank" rel="noopener noreferrer">
+            {page.title}, {page.photoCredit.author}
+          </a>{" "}
+          · {page.photoCredit.license} · Wikimedia Commons
+        </p>
+      )}
+
       {/* ============ BODY ============ */}
-      {page.type === "search" ? (
+      {page.type === "communities" ? (
+        <CommunitiesBody content={content} page={page} />
+      ) : page.type === "search" ? (
         <SearchBody content={content} />
       ) : page.type === "connect" ? (
         <ConnectBody content={content} />
@@ -320,6 +332,66 @@ function TeamBody({ content, page }: { content: SiteContent; page: SubPage }) {
           </div>
         </section>
       )}
+    </>
+  );
+}
+
+/** Town cards: photo, name, and the description revealed on hover. */
+function CommunitiesBody({ content, page }: { content: SiteContent; page: SubPage }) {
+  const cards = content.communities ?? [];
+  const credited = content.pages.filter((p) => p.photoCredit);
+  return (
+    <>
+      {page.intro && (
+        <section className="solid-section">
+          <div className="boxed-text lp-vertical-paddings">
+            <div className="lp-container">
+              <div className="boxed-text__description reveal">
+                {page.intro.map((text, i) => (
+                  <p key={i}>{text}</p>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+      <section className="solid-section">
+        <div className="gallery-component">
+          <div className="lp-container">
+            <div className="gallery-row cols-3">
+              {cards.map((card, i) => (
+                <div className="gallery-col reveal" data-delay={(i % 3) * 100 || undefined} key={card.title}>
+                  <a className="gallery-card gallery-card--overlay gallery-card--short" href={card.href}>
+                    <div className="gallery-card__preview">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={card.image} alt={card.title} loading="lazy" />
+                    </div>
+                    <div className="gallery-card__veil"></div>
+                    <div className="gallery-card__panel">
+                      <h3 className="gallery-card__panel-title">{card.title}</h3>
+                      {card.description && <p className="gallery-card__panel-desc">{card.description}</p>}
+                    </div>
+                  </a>
+                </div>
+              ))}
+            </div>
+            {credited.length > 0 && (
+              <p className="photo-credits">
+                Town photographs licensed via Wikimedia Commons:{" "}
+                {credited.map((p, i) => (
+                  <span key={p.slug}>
+                    {i > 0 && " · "}
+                    <a href={p.photoCredit!.source} target="_blank" rel="noopener noreferrer">
+                      {p.title}
+                    </a>{" "}
+                    {p.photoCredit!.author}, {p.photoCredit!.license}
+                  </span>
+                ))}
+              </p>
+            )}
+          </div>
+        </div>
+      </section>
     </>
   );
 }

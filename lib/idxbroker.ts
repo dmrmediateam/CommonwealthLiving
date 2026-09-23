@@ -1,6 +1,7 @@
 import type { Listing } from "@/content/site";
 import { site } from "@/content/site";
 import { searchListings } from "@/lib/idx/search";
+import type { ListingSummary } from "@/lib/idx/types";
 import { formatPrice } from "@/lib/idx/display";
 
 /* ==========================================================================
@@ -64,7 +65,7 @@ export async function getFeaturedListings(): Promise<Listing[] | null> {
           baths: item.totalBaths ? String(item.totalBaths) : undefined,
           sqft: item.sqFt ? String(item.sqFt) : undefined,
           status: item.propStatus ?? item.idxStatus ?? "For Sale",
-          mls: item.listingID,
+          mls: item.listingID ? String(item.listingID) : undefined,
           image: image ?? "",
           href: item.fullDetailsURL ?? "#",
         };
@@ -75,6 +76,21 @@ export async function getFeaturedListings(): Promise<Listing[] | null> {
   } catch {
     return teamListings();
   }
+}
+
+/** Normalized MLS listing -> the shape the homepage grid renders. */
+function toConfigListing(listing: ListingSummary): Listing {
+  return {
+    price: formatPrice(listing.price),
+    address: listing.address.full,
+    beds: listing.beds ? String(listing.beds) : undefined,
+    baths: listing.baths ? String(listing.baths) : undefined,
+    sqft: listing.sqFt ? String(listing.sqFt) : undefined,
+    status: listing.status === "pending" ? "Pending" : listing.status === "sold" ? "Sold" : "For Sale",
+    mls: listing.mlsNumber,
+    image: listing.primaryPhoto?.url ?? "",
+    href: listing.detailUrl,
+  };
 }
 
 /**
@@ -99,17 +115,7 @@ async function teamListings(): Promise<Listing[] | null> {
       for (const listing of response.listings) {
         if (!listing.listingAgentId) continue;
         if (!agentIds.includes(listing.listingAgentId.toLowerCase())) continue;
-        found.push({
-          price: formatPrice(listing.price),
-          address: listing.address.full,
-          beds: listing.beds ? String(listing.beds) : undefined,
-          baths: listing.baths ? String(listing.baths) : undefined,
-          sqft: listing.sqFt ? String(listing.sqFt) : undefined,
-          status: status === "active" ? "For Sale" : status === "pending" ? "Pending" : "Sold",
-          mls: listing.mlsNumber,
-          image: listing.primaryPhoto?.url ?? "",
-          href: listing.detailUrl,
-        });
+        found.push(toConfigListing(listing));
         if (found.length >= 6) break;
       }
     } catch {
