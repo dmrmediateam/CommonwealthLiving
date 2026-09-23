@@ -404,12 +404,6 @@ export const site: SiteContent = {
         bio: "Fifteen years in the mortgage business before leading the team, Tom brings a lender's eye for the numbers to every purchase and sale.",
       },
       {
-        name: "Vasilis Axios",
-        role: "Real Estate Agent",
-        image: "/team/vasilis-axios.jpg",
-        bio: "Quick to respond and deeply versed in the process, Vasilis stays in close contact with every party from first showing to closing day.",
-      },
-      {
         name: "Alexander Stamatiou",
         role: "Real Estate Agent",
         image: "/team/alexander-stamatiou.jpg",
